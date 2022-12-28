@@ -4,11 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: [
-    'plugin:vue/vue3-recommended',
-    'standard-with-typescript',
-    'prettier',
-  ],
+  extends: ['plugin:vue/vue3-recommended', 'standard-with-typescript', 'prettier'],
   overrides: [],
   parser: 'vue-eslint-parser',
   parserOptions: {
@@ -17,5 +13,12 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['vue'],
-  rules: {},
+  rules: {
+    'vue/multi-word-component-names': [
+      'error',
+      {
+        ignores: ['index'],
+      },
+    ],
+  },
 }

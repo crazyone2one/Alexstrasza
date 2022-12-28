@@ -1,4 +1,11 @@
 /// <reference types="vite/client" />
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue'
+  // const component: DefineComponent<{}, {}, any>
+  const component: DefineComponent<Record<string, never>, Record<string, never>, never>
+  export default component
+}
+
 interface ImportMetaEnv {
   readonly VITE_APP_TITLE: string
   readonly VITE_APP_BASE_API: string
@@ -9,4 +16,11 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
   readonly env: ImportMetaEnv
+}
+
+interface Window {
+  $loadingBar?: import('naive-ui').LoadingBarProviderInst
+  $dialog?: import('naive-ui').DialogProviderInst
+  $message?: import('naive-ui').MessageProviderInst
+  $notification?: import('naive-ui').NotificationProviderInst
 }
