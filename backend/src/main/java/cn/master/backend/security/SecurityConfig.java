@@ -27,7 +27,7 @@ public class SecurityConfig {
                 // Disable CSRF (cross site request forgery)
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/user/login").permitAll()
+                .antMatchers("/user/login", "/user/register").permitAll()
                 // Disallow everything else..
                 .anyRequest().authenticated()
                 .and()
