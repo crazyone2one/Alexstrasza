@@ -1,5 +1,6 @@
 import axios from 'axios'
 import router from '../router'
+import { useUserInfoStore } from '../store/modules/user'
 
 const config = {
   baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -15,9 +16,9 @@ const axiosInstance = axios.create(config)
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    //   const userStore = useUserInfoStore()
-    const token = 'userStore.getToken()'
-    if (token != null) {
+    const userStore = useUserInfoStore()
+    const token = userStore.getToken()
+    if (token) {
       config.headers = {
         ...config.headers,
         Authorization: `Bearer ${token}`,
