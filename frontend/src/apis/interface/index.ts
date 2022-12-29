@@ -2,7 +2,7 @@
 export interface IResult {
   code: string
   message: string
-  success: boolean
+  success?: boolean
 }
 // * 请求响应参数(包含data)
 export interface IResultData<T = unknown> extends IResult {
