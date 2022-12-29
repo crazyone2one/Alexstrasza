@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author 11's papa
@@ -15,5 +15,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface SysUserService extends IService<SysUser> {
 
+    /**
+     * desc: 添加用户信息
+     *
+     * @param httpServletRequest HttpServletRequest
+     * @param sysUser            参数
+     * @return cn.master.backend.entity.SysUser
+     */
     SysUser addUser(HttpServletRequest httpServletRequest, SysUser sysUser);
 }

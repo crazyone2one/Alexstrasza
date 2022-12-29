@@ -6,20 +6,19 @@ interface IReqLogin {
   password: string
 }
 export interface IUserInfo {
-  userId: string
+  userId?: string
   email: string
-  nickname: string
-  password: string
-  status: boolean
-  token: string
   username: string
-  mobile: string
-  authorities: unknown
+  phone: string
+  token: string
+  last_workspace_id: string
+  last_organization_id: string
+  authorities: []
 }
 export const loginApi = async (params: IReqLogin): Promise<IResultData<IUserInfo>> => {
   return await service.post('/user/login', params)
 }
 
-export const registerApi = async (params: unknown): Promise<IResultData<IUserInfo>> => {
+export const registerApi = async (params: unknown): Promise<IResultData<unknown>> => {
   return await service.post('/user/register', params)
 }

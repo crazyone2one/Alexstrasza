@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author 11's papa
@@ -28,6 +28,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     final PasswordEncoder passwordEncoder;
     final JwtUtils jwtUtils;
     private final static String DEFAULT_PASSWORD = "e10adc3949ba59abbe56e057f20f883e";
+
     @Override
     public SysUser addUser(HttpServletRequest httpServletRequest, SysUser sysUser) {
         String password = passwordEncoder.encode(StringUtils.isBlank(sysUser.getPassword()) ? DEFAULT_PASSWORD : sysUser.getPassword());
