@@ -20,3 +20,6 @@ td .n-button + .n-button {
 .n-card {
   border-radius: 10px;
 }
+.n-config-provider{
+  height: 100%;
+}
