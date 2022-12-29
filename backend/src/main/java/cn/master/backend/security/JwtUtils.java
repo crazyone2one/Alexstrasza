@@ -21,6 +21,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtUtils {
     final JwtProperties jwtProperties;
+
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 // 如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
@@ -35,6 +36,7 @@ public class JwtUtils {
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
     }
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -75,7 +77,6 @@ public class JwtUtils {
     }
 
 
-
     /**
      * 从httpServletRequest中获取token
      *
@@ -88,5 +89,18 @@ public class JwtUtils {
             return headerAuth.substring(7);
         }
         return "";
+    }
+
+    /**
+     * 生成JWT
+     *
+     * @param userDetails userDetails
+     * @return java.lang.String
+     */
+    public String generateToken(SecurityUser userDetails) {
+        Map<String, Object> claims = new LinkedHashMap<>();
+        claims.put("id", userDetails.getUserId());
+        claims.put("name", userDetails.getUsername());
+        return createToken(claims, userDetails.getUsername());
     }
 }
