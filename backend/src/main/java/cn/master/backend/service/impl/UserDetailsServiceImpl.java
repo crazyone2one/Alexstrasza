@@ -5,7 +5,6 @@ import cn.master.backend.mapper.SysUserMapper;
 import cn.master.backend.security.SecurityUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     final SysUserMapper sysUserMapper;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public SecurityUser loadUserByUsername(String username) throws UsernameNotFoundException {
         SysUser sysUser = sysUserMapper.findByName(username);
         if (Objects.isNull(sysUser)) {
             throw new UsernameNotFoundException("用户名错误/不存在");
         }
-        return new SecurityUser(sysUser.getName(), sysUser.getPassword(), List.of(new SimpleGrantedAuthority("USER")));
+        SecurityUser user = new SecurityUser(sysUser.getName(), sysUser.getPassword(), List.of(new SimpleGrantedAuthority("USER")));
+        user.setUserId(sysUser.getId());
+        return user;
     }
 }
