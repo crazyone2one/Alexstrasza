@@ -6,12 +6,14 @@ import CryptoJS from 'crypto-js'
 import { loginApi } from '/@/apis/modules/user'
 import { useUserInfoStore } from '/@/store/modules/user'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 interface ModelType {
   name: string | null
   password: string | null
   email?: string | null
 }
+const { t } = useI18n()
 const userInfo = useUserInfoStore()
 const formRef = ref<FormInst | null>(null)
 const model = ref<ModelType>({
@@ -45,7 +47,7 @@ const handleLogin = async (e: Event) => {
         const redirect = route.query.redirect?.toString()
         router.replace(redirect ?? route.redirectedFrom?.fullPath ?? '/')
         window.$notification?.success({
-          content: `欢迎回来, ${resp.data.username}`,
+          content: t('login.signInText') + `, ${resp.data.username}`,
           duration: 2500,
           keepAliveOnHover: true,
         })
@@ -63,11 +65,11 @@ const handleLogin = async (e: Event) => {
           <h2 class="logo-text">Alexstrasza</h2>
         </div>
         <n-form ref="formRef" :model="model">
-          <n-form-item-row label="用户名" path="name">
+          <n-form-item-row :label="$t('login.username')" path="name">
             <n-input v-model:value="model.name" />
           </n-form-item-row>
-          <n-form-item-row label="密码" path="password">
-            <n-input v-model:value="model.password" />
+          <n-form-item-row :label="$t('login.password')" path="password">
+            <n-input v-model:value="model.password" :placeholder="$t('login.password')" />
           </n-form-item-row>
         </n-form>
         <n-button type="primary" block secondary strong @click="handleLogin"> 登录 </n-button>
