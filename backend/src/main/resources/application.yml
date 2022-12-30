@@ -9,3 +9,5 @@ jwt:
   authorization: Authorization
   token-prefix: Bearer
   expiration-time: 10800 # 3h
+server:
+  port: 8888
