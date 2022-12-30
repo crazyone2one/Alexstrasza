@@ -6,11 +6,7 @@ const handleClick = (): void => {
 }
 </script>
 <template>
-  <n-result
-    status="success"
-    title="Dashboard"
-    description="A dashboard scaffolding based on Vue.js 3.x created by Vite."
-  >
+  <n-result status="success" title="Project" description="Not yet!">
     <template #footer>
       <n-button @click="handleClick">not yet</n-button>
     </template>
