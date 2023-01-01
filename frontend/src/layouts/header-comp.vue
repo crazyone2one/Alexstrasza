@@ -3,7 +3,7 @@ import { NLayoutHeader, NSpace, NDropdown, NAvatar } from 'naive-ui'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserInfoStore } from '../store/modules/user'
-import avatar from '../../public/title-logo.svg'
+import avatar from '/@/assets/title-logo.svg'
 
 const userStore = useUserInfoStore()
 const router = useRouter()
