@@ -20,5 +20,6 @@ module.exports = {
         ignores: ['index'],
       },
     ],
+    'import/no-absolute-path': 'off',
   },
 }
