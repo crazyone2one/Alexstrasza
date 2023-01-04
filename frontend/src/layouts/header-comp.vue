@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserInfoStore } from '../store/modules/user'
 import avatar from '/@/assets/title-logo.svg'
+import HeaderWorkspaceComp from './HeaderWorkspaceComp.vue'
 
 const userStore = useUserInfoStore()
 const router = useRouter()
@@ -24,6 +25,7 @@ const handleOptionsSelect = (key: string): void => {
 <template>
   <n-layout-header bordered>
     <n-space :size="20" align="center" style="line-height: 1" class="ml-auto">
+      <header-workspace-comp />
       <n-dropdown placement="bottom-end" show-arrow :options="options" @select="handleOptionsSelect">
         <n-avatar round size="small" :src="avatar" />
       </n-dropdown>
