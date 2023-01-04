@@ -38,9 +38,9 @@ const handleLogin = async (e: Event) => {
       loginApi(params).then((resp) => {
         userInfo.$patch((state) => {
           state.user.id = resp.data.userId as string
-          state.user.token = resp.data.token
+          state.user.token = resp.data.token as string
           state.user.username = resp.data.username
-          state.user.permissions = resp.data.authorities
+          state.user.permissions = resp.data.authorities as []
         })
         loading.value = false
         const route = router.currentRoute.value

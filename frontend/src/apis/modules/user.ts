@@ -1,3 +1,4 @@
+import { useReactivated } from 'naive-ui/es/_utils'
 import { IReqPage, IResultData } from '../interface'
 import service from '/@/apis/index'
 
@@ -6,14 +7,18 @@ interface IReqLogin {
   password: string
 }
 export interface IUserInfo {
-  userId?: string
+  id?: string
+  userId: string
   email: string
+  name: string
   username: string
   phone: string
-  token: string
-  last_workspace_id: string
-  last_organization_id: string
-  authorities: []
+  token?: string
+  password?: string
+  groups: any[]
+  lastWorkspaceId?: string
+  lastProjectId?: string
+  authorities?: []
 }
 export const loginApi = async (params: IReqLogin): Promise<IResultData<IUserInfo>> => {
   return await service.post('/user/login', params)
@@ -21,4 +26,12 @@ export const loginApi = async (params: IReqLogin): Promise<IResultData<IUserInfo
 
 export const registerApi = async (params: unknown): Promise<IResultData<unknown>> => {
   return await service.post('/user/register', params)
+}
+
+export const updateCurrentUser = (user: unknown) => {
+  return service.post('/user/update/current', user)
+}
+
+export const getCurrentUser = (userId: string): Promise<IResultData<IUserInfo>> => {
+  return service.get(`/user/current/${userId}`)
 }
