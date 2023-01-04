@@ -103,4 +103,16 @@ public class JwtUtils {
         claims.put("name", userDetails.getUsername());
         return createToken(claims, userDetails.getUsername());
     }
+
+    /**
+     * desc: 获取user id
+     *
+     * @param httpServletRequest httpServletRequest
+     * @return java.lang.String
+     */
+    public String getUserIdFromToken(HttpServletRequest httpServletRequest) {
+        String token = getJwtTokenFromRequest(httpServletRequest);
+        Claims claims = extractAllClaims(token);
+        return (String) claims.get("id");
+    }
 }
