@@ -52,3 +52,11 @@ export const saveProject = (param: IProject): Promise<IResultData<IProject>> => 
 export const modifyProject = (param: IProject): Promise<IResultData<IProject>> => {
   return service.post(`/project/update`, param)
 }
+/**
+ * delete project
+ * @param projectId projectId
+ * @returns
+ */
+export const delProjectById = (projectId: string) => {
+  return service.get(`/project/delete/${projectId}`)
+}

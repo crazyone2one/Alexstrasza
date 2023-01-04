@@ -41,12 +41,18 @@ public class SysProjectController {
 
     @PostMapping("/add")
     public ResponseInfo<SysProject> addProject(HttpServletRequest httpServletRequest, @RequestBody AddProjectRequest project) {
-        SysProject sysProject = service.addProject(httpServletRequest,project);
+        SysProject sysProject = service.addProject(httpServletRequest, project);
         return ResponseInfo.success(sysProject);
     }
+
     @PostMapping("/update")
     public ResponseInfo<SysProject> updateProject(@RequestBody AddProjectRequest project) {
         SysProject sysProject = service.updateProject(project);
         return ResponseInfo.success(sysProject);
+    }
+
+    @GetMapping("/delete/{projectId}")
+    public ResponseInfo<String> deleteProject(@PathVariable String projectId) {
+        return ResponseInfo.success(service.deleteProject(projectId));
     }
 }

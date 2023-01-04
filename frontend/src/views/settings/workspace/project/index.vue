@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DataTableColumns, NCard, NDataTable, NSpin, NSpace, NButton } from 'naive-ui'
+import { DataTableColumns, NCard, NDataTable, NSpin, NSpace, NButton, NPopconfirm } from 'naive-ui'
 import { ref, h, reactive, onMounted, computed } from 'vue'
 import SearchComponent from '/@/components/SearchComponent.vue'
 import PaginationComponent from '/@/components/PaginationComponent.vue'
@@ -7,13 +7,16 @@ import ButtonComp from '/@/components/ButtonComponent.vue'
 import { IPageResponse } from '/@/apis/interface'
 import { useI18n } from 'vue-i18n'
 import DeleteComponent from '/@/components/DeleteComponent.vue'
-import { getProjectPages, IProject } from '/@/apis/modules/project'
+import { getProjectPages, IProject, delProjectById } from '/@/apis/modules/project'
 import { useAppStore } from '/@/store/modules/app'
+import { useUserInfoStore } from '/@/store/modules/user'
 import EditProjectComp from './EditProjectComp.vue'
+import { updateCurrentUser } from '/@/apis/modules/user'
 
 const show = ref(false)
 const { t } = useI18n()
 const appStore = useAppStore()
+const userStore = useUserInfoStore()
 const editProjectComp = ref<InstanceType<typeof EditProjectComp> | null>(null)
 const deleteComponent = ref<InstanceType<typeof DeleteComponent> | null>(null)
 const state = reactive({
@@ -35,7 +38,7 @@ const handleEdit = (param?: IProject): void => {
   editProjectComp.value?.openEditModal(param)
 }
 const handleDelete = (param: IProject) => {
-  console.log('delete')
+  deleteComponent.value?.openDeleteModal(param)
 }
 
 // * 创建列表表头
@@ -111,15 +114,24 @@ const createColumns = (): DataTableColumns<IProject> => {
                 { default: () => t('commons.edit') }
               ),
               h(
-                NButton,
+                NPopconfirm,
                 {
-                  size: 'small',
-                  type: 'error',
-                  text: true,
-                  disabled: row.id === projectId.value,
-                  onClick: () => handleDelete(row),
+                  onPositiveClick: (e: any) => {
+                    handleDelete(row)
+                  },
                 },
-                { default: () => t('commons.delete') }
+                {
+                  trigger: () => {
+                    return h(
+                      NButton,
+                      { size: 'small', type: 'error', text: true, disabled: row.id === projectId.value },
+                      { default: () => t('commons.delete') }
+                    )
+                  },
+                  default: () => {
+                    return t('project.delete_tip')
+                  },
+                }
               ),
             ],
           }
@@ -157,8 +169,15 @@ const handlePageSize = (pageSize: number) => {
   loadTableData()
 }
 // * 删除数据
-const deleteWorkspace = (param: IProject) => {
-  console.log(param)
+const deleteProject = (param: IProject) => {
+  delProjectById(param.id as string).then(() => {
+    if (param.id === projectId.value) {
+      appStore.setProjectId('')
+      updateCurrentUser({ id: userStore.getSessionUser().id, lastProjectId: '' })
+    }
+    window.$message?.success(t('commons.delete_success'))
+    loadTableData()
+  })
 }
 onMounted(() => {
   loadTableData()
@@ -183,7 +202,7 @@ onMounted(() => {
     </n-card>
   </n-spin>
   <edit-project-comp ref="editProjectComp" @refresh="loadTableData" />
-  <delete-component ref="deleteComponent" :title="$t('workspace.delete')" @delete="deleteWorkspace" />
+  <delete-component ref="deleteComponent" :title="$t('project.delete')" @delete="deleteProject" />
 </template>
 
 <style scoped></style>

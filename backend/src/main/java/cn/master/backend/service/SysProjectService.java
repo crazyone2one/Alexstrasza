@@ -38,5 +38,19 @@ public interface SysProjectService extends IService<SysProject> {
      */
     SysProject addProject(HttpServletRequest httpServletRequest, AddProjectRequest project);
 
+    /**
+     * desc: update project
+     *
+     * @param project 参数
+     * @return cn.master.backend.entity.SysProject
+     */
     SysProject updateProject(AddProjectRequest project);
+
+    /**
+     * desc: 删除
+     *
+     * @param projectId project id
+     * @return java.lang.String
+     */
+    String deleteProject(String projectId);
 }

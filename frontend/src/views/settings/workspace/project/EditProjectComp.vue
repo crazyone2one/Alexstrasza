@@ -7,6 +7,7 @@ import { IProject, modifyProject, saveProject } from '/@/apis/modules/project'
 import TemplateSelectComp from '/@/components/TemplateSelectComp.vue'
 import { useAppStore } from '/@/store/modules/app'
 import { useUserInfoStore } from '/@/store/modules/user'
+import { getCurrentUser } from '/@/apis/modules/user'
 
 const { t } = useI18n()
 const appStore = useAppStore()
@@ -73,6 +74,19 @@ const handleSubmit = (): void => {
         saveProject(model.value).then(() => {
           window.$message?.success(t('commons.save_success'))
           modalDialog.value?.closeModal()
+          // 添加项目后重新加载一次用户信息
+          getCurrentUser(userStore.getSessionUser().id).then((resp) => {
+            userStore.$patch((state) => {
+              state.user.id = resp.data.id as string
+              state.user.token = resp.data.token as string
+              state.user.username = resp.data.name
+              state.user.permissions = resp.data.authorities as []
+            })
+            appStore.$patch((state) => {
+              state.app.currentProjectId = resp.data.lastProjectId as string
+              state.app.currentWorkspaceId = resp.data.lastWorkspaceId as string
+            })
+          })
           emits('refresh')
         })
       }

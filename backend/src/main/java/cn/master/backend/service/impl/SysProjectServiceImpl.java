@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author 11's papa
@@ -35,12 +35,13 @@ import javax.servlet.http.HttpServletRequest;
 public class SysProjectServiceImpl extends ServiceImpl<SysProjectMapper, SysProject> implements SysProjectService {
     final SysUserMapper sysUserMapper;
     final SysUserGroupMapper sysUserGroupMapper;
+
     @Override
     public IPage<SysProject> getProjectList(ProjectRequest request, Page<SysProject> producePage) {
         LambdaQueryWrapper<SysProject> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StringUtils.isNotBlank(request.getName()), SysProject::getName, request.getName());
-        wrapper.eq(StringUtils.isNotBlank(request.getWorkspaceId()),SysProject::getWorkspaceId,request.getWorkspaceId());
-        wrapper.eq(StringUtils.isNoneBlank(request.getProjectId()),SysProject::getId,request.getProjectId());
+        wrapper.eq(StringUtils.isNotBlank(request.getWorkspaceId()), SysProject::getWorkspaceId, request.getWorkspaceId());
+        wrapper.eq(StringUtils.isNoneBlank(request.getProjectId()), SysProject::getId, request.getProjectId());
         wrapper.orderByDesc(SysProject::getUpdateTime);
         IPage<SysProject> iPage = baseMapper.selectPageVo(producePage, wrapper);
         for (SysProject record : iPage.getRecords()) {
@@ -77,6 +78,19 @@ public class SysProjectServiceImpl extends ServiceImpl<SysProjectMapper, SysProj
         checkProjectExist(project);
         baseMapper.updateById(project);
         return project;
+    }
+
+    @Override
+    public String deleteProject(String projectId) {
+        // User Group
+        deleteProjectUserGroup(projectId);
+        baseMapper.deleteById(projectId);
+        return null;
+    }
+
+    private void deleteProjectUserGroup(String projectId) {
+        LambdaQueryWrapper<SysUserGroup> wrapper = new LambdaQueryWrapper<SysUserGroup>().eq(SysUserGroup::getSourceId, projectId);
+        sysUserGroupMapper.delete(wrapper);
     }
 
     private void checkProjectExist(AddProjectRequest project) {
