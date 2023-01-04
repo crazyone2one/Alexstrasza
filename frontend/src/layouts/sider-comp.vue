@@ -28,13 +28,13 @@ const collapsed = computed(() => {
 const menus = ref([
   {
     id: '610159148224d543ae4e05d1',
-    label: 'Dashboard',
+    label: t('commons.my_workstation'),
     icon: 'dashboard',
     name: 'dashboard',
   },
   {
     id: '610159148224d543ae4e05d3',
-    label: 'System Settings',
+    label: t('commons.system_setting'),
     icon: 'settings',
     // name: 'users',
     children: [
