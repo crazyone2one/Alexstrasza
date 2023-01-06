@@ -69,7 +69,12 @@ const handleLogin = async (e: Event) => {
             <n-input v-model:value="model.name" />
           </n-form-item-row>
           <n-form-item-row :label="$t('login.password')" path="password">
-            <n-input v-model:value="model.password" :placeholder="$t('login.password')" />
+            <n-input
+              v-model:value="model.password"
+              :placeholder="$t('login.password')"
+              type="password"
+              show-password-on="mousedown"
+            />
           </n-form-item-row>
         </n-form>
         <n-button type="primary" block secondary strong @click="handleLogin"> 登录 </n-button>
