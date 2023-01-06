@@ -50,3 +50,7 @@ export const getWorkspaces = (): Promise<IResultData<IWorkspace[]>> => {
 export const switchWorkspace = (workspaceId: string): Promise<IResultData<IUserInfo>> => {
   return service.get(`/user/switch/source/ws/${workspaceId}`)
 }
+
+export const getGroupResource = (groupId: string, groupType: string) => {
+  return service.get(`/workspace/list/resource/${groupId}/${groupType}`)
+}

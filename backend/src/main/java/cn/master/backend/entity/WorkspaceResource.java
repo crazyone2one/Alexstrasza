@@ -11,4 +11,5 @@ import java.util.List;
 @Data
 public class WorkspaceResource {
     private List<SysWorkspace> workspaces = new ArrayList<>();
+    private List<SysProject> projects = new ArrayList<>();
 }

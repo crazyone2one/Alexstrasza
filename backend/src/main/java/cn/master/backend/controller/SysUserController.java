@@ -4,6 +4,7 @@ import cn.master.backend.config.ResponseInfo;
 import cn.master.backend.entity.SysProject;
 import cn.master.backend.entity.SysUser;
 import cn.master.backend.entity.UserDTO;
+import cn.master.backend.entity.UserGroupPermissionDTO;
 import cn.master.backend.request.AuthenticateRequest;
 import cn.master.backend.request.ProjectRequest;
 import cn.master.backend.request.QueryMemberRequest;
@@ -52,6 +53,17 @@ public class SysUserController {
         return ResponseInfo.success(user);
     }
 
+    @PostMapping("/special/add")
+    public ResponseInfo<UserDTO> insertUser(HttpServletRequest httpServletRequest, @RequestBody UserRequest sysUser) {
+        UserDTO user = sysUserService.addUser(httpServletRequest, sysUser);
+        return ResponseInfo.success(user);
+    }
+
+    @PostMapping("/special/update")
+    public ResponseInfo<String> updateUser(@RequestBody UserRequest sysUser) {
+        return ResponseInfo.success(sysUserService.updateUserRole(sysUser));
+    }
+
     @PostMapping("/login")
     public ResponseInfo<SecurityUser> loginUser(@RequestBody AuthenticateRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getName(), request.getPassword()));
@@ -96,5 +108,20 @@ public class SysUserController {
         result.put("total", pageInfo.getTotal());
         result.put("records", pageInfo.getRecords());
         return ResponseInfo.success(result);
+    }
+
+    @PostMapping("special/list/{page}/{limit}")
+    public ResponseInfo<Map<String, Object>> getUserList(@RequestBody UserRequest request, @PathVariable long page, @PathVariable long limit) {
+        Page<SysUser> producePage = new Page<>(page, limit);
+        IPage<SysUser> pageInfo = sysUserService.getUserListWithRequest(request, producePage);
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("total", pageInfo.getTotal());
+        result.put("records", pageInfo.getRecords());
+        return ResponseInfo.success(result);
+    }
+
+    @GetMapping("/special/user/group/{userId}")
+    public ResponseInfo<UserGroupPermissionDTO> getUserGroup(@PathVariable String userId) {
+        return ResponseInfo.success(sysUserService.getUserGroup(userId));
     }
 }

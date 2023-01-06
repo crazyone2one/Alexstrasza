@@ -1,4 +1,6 @@
 import { IReqPage, IResultData, IPageResponse } from '../interface'
+import { ISystemGroup } from './user-group'
+import { IWorkspace } from './workspace'
 import service from '/@/apis/index'
 
 interface IReqLogin {
@@ -8,6 +10,7 @@ interface IReqLogin {
 interface IWsMember extends IReqPage {
   workspaceId: string
 }
+interface IUserSearch extends IReqPage {}
 export interface IUserInfo {
   id?: string
   userId: string
@@ -20,7 +23,15 @@ export interface IUserInfo {
   groups: any[]
   lastWorkspaceId?: string
   lastProjectId?: string
-  authorities?: []
+  authorities?: ISystemGroup[]
+}
+export interface IGroup {
+  ids?: string[]
+  selects?: string[]
+  showSearchGetMore: boolean
+  type: string
+  workspace?: IWorkspace[]
+  workspaceOptions?: { label: string; value: string }[]
 }
 // * login api methods
 export const loginApi = async (params: IReqLogin): Promise<IResultData<IUserInfo>> => {
@@ -30,7 +41,7 @@ export const loginApi = async (params: IReqLogin): Promise<IResultData<IUserInfo
 export const registerApi = async (params: unknown): Promise<IResultData<unknown>> => {
   return await service.post('/user/register', params)
 }
-// * update user
+// * update current user
 export const updateCurrentUser = async (user: unknown) => {
   return await service.post('/user/update/current', user)
 }
@@ -47,4 +58,24 @@ export const getWorkspaceMemberPages = async (params: IWsMember): Promise<IResul
 
 export const getWorkspaceMemberGroup = (workspaceId: string, userId: string) => {
   return service.get(`/user/group/list/ws/${workspaceId}/${userId}`)
+}
+
+/**
+ *  列表数据查询*/
+export const specialListUsers = (params: IUserSearch): Promise<IResultData<IPageResponse<IUserInfo>>> => {
+  const page = params.page
+  const limit = params.limit
+  return service.post(`/user/special/list/${page}/${limit}`, params)
+}
+
+export const specialGetUserGroup = (userId: string) => {
+  return service.get(`/user/special/user/group/${userId}`)
+}
+// * add user
+export const specialCreateUser = (param: IUserInfo) => {
+  return service.post('/user/special/add', param)
+}
+//* update user
+export const specialModifyUser = (param: IUserInfo) => {
+  return service.post('/user/special/update', param)
 }

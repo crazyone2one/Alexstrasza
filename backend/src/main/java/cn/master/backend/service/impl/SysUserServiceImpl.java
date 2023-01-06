@@ -3,6 +3,7 @@ package cn.master.backend.service.impl;
 import cn.master.backend.constants.UserGroupType;
 import cn.master.backend.constants.UserStatus;
 import cn.master.backend.entity.*;
+import cn.master.backend.exception.CustomException;
 import cn.master.backend.mapper.SysGroupMapper;
 import cn.master.backend.mapper.SysProjectMapper;
 import cn.master.backend.mapper.SysUserGroupMapper;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -55,6 +57,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         String password = passwordEncoder.encode(StringUtils.isBlank(sysUser.getPassword()) ? DEFAULT_PASSWORD : sysUser.getPassword());
         sysUser.setPassword(password);
         sysUser.setStatus(UserStatus.NORMAL);
+        sysUser.setSource("LOCAL");
         baseMapper.insert(sysUser);
         List<Map<String, Object>> groups = sysUser.getGroups();
         if (!groups.isEmpty()) {
@@ -172,6 +175,61 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public IPage<SysUser> getMemberList(QueryMemberRequest request, Page<SysUser> producePage) {
         return baseMapper.selectPageVo(producePage, request);
+    }
+
+    @Override
+    public IPage<SysUser> getUserListWithRequest(UserRequest request, Page<SysUser> producePage) {
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StringUtils.isNoneBlank(request.getName()), SysUser::getName, request.getName());
+        wrapper.like(StringUtils.isNoneBlank(request.getEmail()), SysUser::getEmail, request.getEmail());
+        wrapper.orderByDesc(SysUser::getCreateTime);
+        return baseMapper.selectPage(producePage, wrapper);
+    }
+
+    @Override
+    public UserGroupPermissionDTO getUserGroup(String userId) {
+        UserGroupPermissionDTO userGroupPermissionDTO = new UserGroupPermissionDTO();
+        LambdaQueryWrapper<SysUserGroup> sysUserGroupLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        sysUserGroupLambdaQueryWrapper.eq(SysUserGroup::getUserId, userId);
+        List<SysUserGroup> userGroups = sysUserGroupMapper.selectList(sysUserGroupLambdaQueryWrapper);
+        if (CollectionUtils.isEmpty(userGroups)) {
+            return userGroupPermissionDTO;
+        }
+        userGroupPermissionDTO.setUserGroups(userGroups);
+        List<String> groupId = userGroups.stream().map(SysUserGroup::getGroupId).collect(Collectors.toList());
+        LambdaQueryWrapper<SysGroup> groupLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        groupLambdaQueryWrapper.in(SysGroup::getId, groupId);
+        List<SysGroup> groups = sysGroupMapper.selectList(groupLambdaQueryWrapper);
+        userGroupPermissionDTO.setGroups(groups);
+        return userGroupPermissionDTO;
+    }
+
+    @Override
+    public String updateUserRole(UserRequest request) {
+        String userId = request.getId();
+        LambdaQueryWrapper<SysUserGroup> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUserGroup::getUserId, userId);
+        List<SysUserGroup> userGroups = sysUserGroupMapper.selectList(queryWrapper);
+        List<String> list = userGroups.stream().map(SysUserGroup::getSourceId).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(list)) {
+            if (list.contains(request.getLastWorkspaceId())) {
+                request.setLastWorkspaceId(null);
+                baseMapper.updateById(request);
+            }
+        }
+        sysUserGroupMapper.delete(queryWrapper);
+        List<Map<String, Object>> groups = request.getGroups();
+        if (!groups.isEmpty()) {
+            insertUserGroup(groups, request.getId());
+        }
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StringUtils.isNoneBlank(request.getEmail()), SysUser::getEmail, request.getEmail());
+        wrapper.eq(StringUtils.isNoneBlank(request.getId()), SysUser::getId, request.getId());
+        if (baseMapper.exists(wrapper)) {
+            throw new CustomException("user_email_already_exists");
+        }
+        baseMapper.updateById(request);
+        return "updated successfully";
     }
 
     private List<SysProject> getProjectListByWsAndUserId(String userId, String sourceId) {

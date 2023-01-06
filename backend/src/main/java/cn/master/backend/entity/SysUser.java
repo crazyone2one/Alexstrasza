@@ -76,4 +76,6 @@ public class SysUser implements Serializable {
      */
     @TableField("phone")
     private String phone;
+    @TableField("source")
+    private String source;
 }

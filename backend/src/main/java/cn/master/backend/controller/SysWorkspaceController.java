@@ -2,6 +2,7 @@ package cn.master.backend.controller;
 
 import cn.master.backend.config.ResponseInfo;
 import cn.master.backend.entity.SysWorkspace;
+import cn.master.backend.entity.WorkspaceResource;
 import cn.master.backend.service.SysUserService;
 import cn.master.backend.service.SysWorkspaceService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -63,5 +64,10 @@ public class SysWorkspaceController {
     @GetMapping("/list/userworkspace")
     public ResponseInfo<List<SysWorkspace>> getWorkspaceListByUserId(HttpServletRequest httpServletRequest) {
         return ResponseInfo.success(service.getWorkspaceListByUserId(httpServletRequest));
+    }
+
+    @GetMapping("/list/resource/{groupId}/{type}")
+    public ResponseInfo<WorkspaceResource> listResource(@PathVariable String groupId, @PathVariable String type) {
+        return ResponseInfo.success(service.listResource(groupId, type));
     }
 }

@@ -4,6 +4,7 @@ import cn.master.backend.constants.UserGroupConstants;
 import cn.master.backend.constants.UserGroupType;
 import cn.master.backend.entity.*;
 import cn.master.backend.mapper.SysGroupMapper;
+import cn.master.backend.mapper.SysProjectMapper;
 import cn.master.backend.mapper.SysUserGroupMapper;
 import cn.master.backend.mapper.SysWorkspaceMapper;
 import cn.master.backend.security.JwtUtils;
@@ -21,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -40,6 +42,7 @@ public class SysWorkspaceServiceImpl extends ServiceImpl<SysWorkspaceMapper, Sys
     final JwtUtils jwtUtils;
     final SysUserGroupMapper userGroupMapper;
     final SysGroupMapper sysGroupMapper;
+    final SysProjectMapper sysProjectMapper;
     private static final String GLOBAL = "global";
 
     @Override
@@ -102,7 +105,28 @@ public class SysWorkspaceServiceImpl extends ServiceImpl<SysWorkspaceMapper, Sys
         if (StringUtils.equals(UserGroupType.WORKSPACE, type)) {
             resource.setWorkspaces(getWorkspaceGroupResource(sysGroup.getScopeId()));
         }
+        if (StringUtils.equals(UserGroupType.PROJECT, type)) {
+            resource.setProjects(getProjectGroupResource(sysGroup.getScopeId()));
+        }
         return resource;
+    }
+
+    private List<SysProject> getProjectGroupResource(String scopeId) {
+        LambdaQueryWrapper<SysProject> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.equals(scopeId, GLOBAL)) {
+            return sysProjectMapper.selectList(wrapper);
+        }
+        SysWorkspace workspace = baseMapper.selectById(scopeId);
+        if (Objects.nonNull(workspace)) {
+            wrapper.eq(SysProject::getWorkspaceId, workspace.getId());
+            return sysProjectMapper.selectList(wrapper);
+        }
+        SysProject project = sysProjectMapper.selectById(scopeId);
+        List<SysProject> list = new ArrayList<>();
+        if (Objects.nonNull(project)) {
+            list.add(project);
+        }
+        return list;
     }
 
     @Override

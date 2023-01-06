@@ -99,9 +99,9 @@ public class SysGroupServiceImpl extends ServiceImpl<SysGroupMapper, SysGroup> i
             if (StringUtils.equals(type, UserGroupType.WORKSPACE)) {
                 map.put("workspaces", workspaceResource.getWorkspaces());
             }
-//            if (StringUtils.equals(type, UserGroupType.PROJECT)) {
-//                map.put("projects", workspaceResource.getProjects());
-//            }
+            if (StringUtils.equals(type, UserGroupType.PROJECT)) {
+                map.put("projects", workspaceResource.getProjects());
+            }
             list.add(map);
         }
         return list;

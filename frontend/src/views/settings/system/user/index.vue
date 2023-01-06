@@ -7,8 +7,9 @@ import ButtonComp from '/@/components/ButtonComponent.vue'
 import { IPageResponse } from '/@/apis/interface'
 import { useI18n } from 'vue-i18n'
 import DeleteComponent from '/@/components/DeleteComponent.vue'
-import { IUserInfo } from '/@/apis/modules/user'
+import { IUserInfo, specialGetUserGroup, specialListUsers } from '/@/apis/modules/user'
 import EditUserComp from './EditUserComp.vue'
+import RolesTagComponent from '/@/components/RolesTagComponent.vue'
 
 const show = ref(false)
 const { t } = useI18n()
@@ -28,7 +29,7 @@ const rowKey = (row: IUserInfo) => {
 
 // * 添加或者编辑
 const handleEdit = (param?: IUserInfo): void => {
-  editUserComp.value?.openEditModal()
+  editUserComp.value?.openEditModal(param, param ? 'Edit' : 'Add', param ? t('user.modify') : t('user.create'))
 }
 const handleDelete = (param: IUserInfo) => {}
 
@@ -44,6 +45,16 @@ const createColumns = (): DataTableColumns<IUserInfo> => {
       title: t('commons.group'),
       align: 'center',
       key: 'type',
+      render(row) {
+        // fixme: 渲染角色tag
+        return h(
+          RolesTagComponent,
+          {
+            roles: row.authorities ? row.authorities : [],
+          },
+          {}
+        )
+      },
     },
     {
       title: t('commons.email'),
@@ -107,7 +118,21 @@ const columns = createColumns()
  * 加载列表数据
  */
 const loadTableData = () => {
-  // show.value = true
+  show.value = true
+  specialListUsers(state.condition)
+    .then((resp) => {
+      const { records, total } = resp.data
+      records.forEach((row) => {
+        // 查询权限
+        specialGetUserGroup(row.id as string).then((resp) => {
+          row.authorities = resp.data.groups
+        })
+      })
+      tableData.records = records
+      tableData.total = total
+      show.value = false
+    })
+    .finally(() => (show.value = false))
 }
 
 const handlePage = (page: number) => {
@@ -145,7 +170,7 @@ onMounted(() => {
       />
     </n-card>
   </n-spin>
-  <edit-user-comp ref="editUserComp" />
+  <edit-user-comp ref="editUserComp" @refresh="loadTableData" />
   <delete-component ref="deleteComponent" :title="$t('workspace.delete')" @delete="deleteWorkspace" />
 </template>
 

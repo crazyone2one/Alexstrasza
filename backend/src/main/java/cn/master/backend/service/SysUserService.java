@@ -2,6 +2,7 @@ package cn.master.backend.service;
 
 import cn.master.backend.entity.SysUser;
 import cn.master.backend.entity.UserDTO;
+import cn.master.backend.entity.UserGroupPermissionDTO;
 import cn.master.backend.request.QueryMemberRequest;
 import cn.master.backend.request.UserRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -77,4 +78,29 @@ public interface SysUserService extends IService<SysUser> {
     UserDTO getCurrentUser(String userId);
 
     IPage<SysUser> getMemberList(QueryMemberRequest request, Page<SysUser> producePage);
+
+    /**
+     * desc: 用户模块列表数据查询
+     *
+     * @param request     查询条件
+     * @param producePage 分页条件
+     * @return com.baomidou.mybatisplus.core.metadata.IPage<cn.master.backend.entity.SysUser>
+     */
+    IPage<SysUser> getUserListWithRequest(UserRequest request, Page<SysUser> producePage);
+
+    /**
+     * desc: return user's permissions
+     *
+     * @param userId user id
+     * @return cn.master.backend.entity.UserGroupPermissionDTO
+     */
+    UserGroupPermissionDTO getUserGroup(String userId);
+
+    /**
+     * desc: 更新user
+     *
+     * @param request 参数
+     * @return java.lang.String
+     */
+    String updateUserRole(UserRequest request);
 }
