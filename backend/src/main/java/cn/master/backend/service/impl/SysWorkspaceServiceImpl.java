@@ -1,8 +1,9 @@
 package cn.master.backend.service.impl;
 
 import cn.master.backend.constants.UserGroupConstants;
-import cn.master.backend.entity.SysUserGroup;
-import cn.master.backend.entity.SysWorkspace;
+import cn.master.backend.constants.UserGroupType;
+import cn.master.backend.entity.*;
+import cn.master.backend.mapper.SysGroupMapper;
 import cn.master.backend.mapper.SysUserGroupMapper;
 import cn.master.backend.mapper.SysWorkspaceMapper;
 import cn.master.backend.security.JwtUtils;
@@ -16,8 +17,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -33,6 +39,9 @@ import javax.servlet.http.HttpServletRequest;
 public class SysWorkspaceServiceImpl extends ServiceImpl<SysWorkspaceMapper, SysWorkspace> implements SysWorkspaceService {
     final JwtUtils jwtUtils;
     final SysUserGroupMapper userGroupMapper;
+    final SysGroupMapper sysGroupMapper;
+    private static final String GLOBAL = "global";
+
     @Override
     public IPage<SysWorkspace> getAllWorkspaceList(SysWorkspace workspace, Page<SysWorkspace> producePage) {
         LambdaQueryWrapper<SysWorkspace> wrapper = new LambdaQueryWrapper<>();
@@ -73,6 +82,52 @@ public class SysWorkspaceServiceImpl extends ServiceImpl<SysWorkspaceMapper, Sys
         // delete workspace
         baseMapper.deleteById(workspaceId);
         return "删除成功";
+    }
+
+    @Override
+    public List<SysWorkspace> getWorkspaceList(SysWorkspace workspace) {
+        LambdaQueryWrapper<SysWorkspace> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(StringUtils.isNoneBlank(workspace.getName()), SysWorkspace::getName, workspace.getName());
+        wrapper.orderByDesc(SysWorkspace::getUpdateTime);
+        return baseMapper.selectList(wrapper);
+    }
+
+    @Override
+    public WorkspaceResource listResource(String groupId, String type) {
+        SysGroup sysGroup = sysGroupMapper.selectById(groupId);
+        WorkspaceResource resource = new WorkspaceResource();
+        if (Objects.isNull(sysGroup)) {
+            return resource;
+        }
+        if (StringUtils.equals(UserGroupType.WORKSPACE, type)) {
+            resource.setWorkspaces(getWorkspaceGroupResource(sysGroup.getScopeId()));
+        }
+        return resource;
+    }
+
+    @Override
+    public List<SysWorkspace> getWorkspaceListByUserId(HttpServletRequest httpServletRequest) {
+        String token = jwtUtils.getJwtTokenFromRequest(httpServletRequest);
+        Claims claims = jwtUtils.extractAllClaims(token);
+        String userId = (String) claims.get("id");
+        List<RelatedSource> relatedSource = userGroupMapper.getRelatedSource(userId);
+        List<String> wsIds = relatedSource
+                .stream()
+                .map(RelatedSource::getWorkspaceId)
+                .distinct()
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(wsIds)) {
+            return new ArrayList<>();
+        }
+        LambdaQueryWrapper<SysWorkspace> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(SysWorkspace::getId, wsIds);
+        return baseMapper.selectList(wrapper);
+    }
+
+    private List<SysWorkspace> getWorkspaceGroupResource(String scopeId) {
+        LambdaQueryWrapper<SysWorkspace> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(!StringUtils.equals(scopeId, GLOBAL), SysWorkspace::getId, scopeId);
+        return baseMapper.selectList(wrapper);
     }
 
     private void checkWorkspace(SysWorkspace workspace) {

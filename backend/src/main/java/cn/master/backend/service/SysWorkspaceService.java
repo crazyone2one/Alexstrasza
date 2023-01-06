@@ -1,11 +1,13 @@
 package cn.master.backend.service;
 
 import cn.master.backend.entity.SysWorkspace;
+import cn.master.backend.entity.WorkspaceResource;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -35,7 +37,31 @@ public interface SysWorkspaceService extends IService<SysWorkspace> {
      */
     SysWorkspace addWorkspaceByAdmin(SysWorkspace workspace, HttpServletRequest httpServletRequest);
 
+    /**
+     * desc: 更新workspace数据
+     *
+     * @param workspace 参数
+     * @return cn.master.backend.entity.SysWorkspace
+     */
     SysWorkspace updateWorkspaceByAdmin(SysWorkspace workspace);
 
+    /**
+     * desc: 删除
+     *
+     * @param workspaceId workspaceId
+     * @return java.lang.String
+     */
     String deleteWorkspaceById(String workspaceId);
+
+    List<SysWorkspace> getWorkspaceList(SysWorkspace workspace);
+
+    WorkspaceResource listResource(String groupId, String type);
+
+    /**
+     * desc: 根据用户获取对应的workspace数据
+     *
+     * @param httpServletRequest httpServletRequest
+     * @return java.util.List<cn.master.backend.entity.SysWorkspace>
+     */
+    List<SysWorkspace> getWorkspaceListByUserId(HttpServletRequest httpServletRequest);
 }

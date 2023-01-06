@@ -13,8 +13,25 @@
         <result column="update_time" property="updateTime" />
         <result column="language" property="language" />
         <result column="last_workspace_id" property="lastWorkspaceId" />
-        <result column="last_organization_id" property="lastOrganizationId" />
+        <result column="last_project_id" property="lastProjectId" />
         <result column="phone" property="phone" />
     </resultMap>
+    <select id="selectPageVo" resultType="cn.master.backend.entity.SysUser">
+        SELECT DISTINCT * FROM (SELECT u.* FROM sys_user_group ug JOIN `sys_user` u ON ug.user_id = u.id  WHERE ug.source_id = #{member.workspaceId}
+        <if test="member.name != null and member.name != ''">
+            AND u.name LIKE CONCAT('%', #{member.name},'%')
+        </if>
+        ORDER BY ug.update_time DESC) temp
+    </select>
+    <select id="queryNameByIds" resultType="cn.master.backend.entity.SysUser">
+        SELECT id, name
+        FROM `sys_user`
+        WHERE id IN
+        <foreach collection="list" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
 
 </mapper>

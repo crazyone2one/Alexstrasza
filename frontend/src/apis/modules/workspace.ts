@@ -1,4 +1,5 @@
 import { IPageResponse, IReqPage, IResultData } from '../interface'
+import { IUserInfo } from './user'
 import service from '/@/apis/index'
 
 export interface IWorkspace {
@@ -32,4 +33,20 @@ export const addWorkspaceSpecial = (param: IWorkspace): Promise<IResultData<IWor
 
 export const updateWorkspaceSpecial = (param: IWorkspace): Promise<IResultData<IWorkspace>> => {
   return service.post('/workspace/special/update', param)
+}
+
+export const getUserWorkspaceList = (): Promise<IResultData<IWorkspace[]>> => {
+  return service.get('/workspace/list/userworkspace')
+}
+
+export const getWorkspaces = (): Promise<IResultData<IWorkspace[]>> => {
+  return service.get('/workspace/list')
+}
+/**
+ * 切换用户workspace
+ * @param workspaceId workspaceId
+ * @returns 更新后的用户数据
+ */
+export const switchWorkspace = (workspaceId: string): Promise<IResultData<IUserInfo>> => {
+  return service.get(`/user/switch/source/ws/${workspaceId}`)
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,5 +53,15 @@ public class SysWorkspaceController {
     public ResponseInfo<String> deleteWorkspaceById(HttpServletRequest httpServletRequest, @PathVariable String workspaceId) {
         sysUserService.refreshSessionUser(httpServletRequest, "workspace", workspaceId);
         return ResponseInfo.success(service.deleteWorkspaceById(workspaceId));
+    }
+
+    @GetMapping("/list")
+    public ResponseInfo<List<SysWorkspace>> getWorkspaceList() {
+        return ResponseInfo.success(service.getWorkspaceList(new SysWorkspace()));
+    }
+
+    @GetMapping("/list/userworkspace")
+    public ResponseInfo<List<SysWorkspace>> getWorkspaceListByUserId(HttpServletRequest httpServletRequest) {
+        return ResponseInfo.success(service.getWorkspaceListByUserId(httpServletRequest));
     }
 }

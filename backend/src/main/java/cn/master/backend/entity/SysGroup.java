@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
@@ -13,42 +15,34 @@ import lombok.*;
  * </p>
  *
  * @author 11's papa
- * @since 2022-12-27
+ * @since 2023-01-01
  */
 @Data
-@TableName("sys_user")
-@AllArgsConstructor
-@NoArgsConstructor
-public class SysUser implements Serializable {
+@TableName("sys_group")
+public class SysGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * User ID
-     */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
-    /**
-     * User name
-     */
     @TableField("name")
     private String name;
 
-    /**
-     * E-Mail address
-     */
-    @TableField("email")
-    private String email;
-
-    @TableField("password")
-    private String password;
+    @TableField("description")
+    private String description;
 
     /**
-     * User status
+     * 是否是系统用户组
      */
-    @TableField("status")
-    private String status;
+    @TableField("system")
+    private Boolean system;
+
+    /**
+     * 所属类型
+     */
+    @TableField("type")
+    private String type;
 
     /**
      * Create timestamp
@@ -62,18 +56,20 @@ public class SysUser implements Serializable {
     @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
-    @TableField("language")
-    private String language;
-
-    @TableField("last_workspace_id")
-    private String lastWorkspaceId;
-
-    @TableField("last_project_id")
-    private String lastProjectId;
+    /**
+     * 创建人(操作人）
+     */
+    @TableField("creator")
+    private String creator;
 
     /**
-     * Phone number of user
+     * 应用范围
      */
-    @TableField("phone")
-    private String phone;
+    @TableField("scope_id")
+    private String scopeId;
+
+    @TableField(exist = false)
+    private String scopeName;
+    @TableField(exist = false)
+    private Long memberSize;
 }

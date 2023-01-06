@@ -12,5 +12,7 @@ jwt:
 mybatis-plus:
   type-aliases-package: cn.master.backend.entity
   mapper-locations: classpath*:mappers/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
   port: 8888

@@ -1,9 +1,15 @@
 package cn.master.backend.service;
 
 import cn.master.backend.entity.SysUser;
+import cn.master.backend.entity.UserDTO;
+import cn.master.backend.request.QueryMemberRequest;
+import cn.master.backend.request.UserRequest;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -22,5 +28,53 @@ public interface SysUserService extends IService<SysUser> {
      * @param sysUser            参数
      * @return cn.master.backend.entity.SysUser
      */
-    SysUser addUser(HttpServletRequest httpServletRequest, SysUser sysUser);
+    UserDTO addUser(HttpServletRequest httpServletRequest, UserRequest sysUser);
+
+    /**
+     * desc: refresh user
+     *
+     * @param httpServletRequest HttpServletRequest
+     * @param sign               sign
+     * @param sourceId           sourceId
+     */
+    void refreshSessionUser(HttpServletRequest httpServletRequest, String sign, String sourceId);
+
+    List<SysUser> getMemberList(QueryMemberRequest request);
+
+    /**
+     * desc: 更新user
+     *
+     * @param sign               workspace/project
+     * @param sourceId           sourceId
+     * @param httpServletRequest httpServletRequest
+     * @return cn.master.backend.entity.UserDTO
+     */
+    SysUser switchUserResource(String sign, String sourceId, HttpServletRequest httpServletRequest);
+
+    /**
+     * desc: 查询项目下成员数量
+     *
+     * @param request 查询参数
+     * @return java.util.List<cn.master.backend.entity.SysUser>
+     */
+    List<SysUser> getProjectMemberList(QueryMemberRequest request);
+
+    /**
+     * desc: 删除项目数据时更新用户信息
+     *
+     * @param user user parameter
+     * @return cn.master.backend.entity.UserDTO
+     */
+    UserDTO updateCurrentUser(SysUser user);
+
+    /**
+     * desc: update user
+     *
+     * @param user user parameter
+     */
+    void updateUser(SysUser user);
+
+    UserDTO getCurrentUser(String userId);
+
+    IPage<SysUser> getMemberList(QueryMemberRequest request, Page<SysUser> producePage);
 }
