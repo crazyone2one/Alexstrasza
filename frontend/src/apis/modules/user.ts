@@ -20,6 +20,7 @@ export interface IUserInfo {
   phone: string
   token?: string
   password?: string
+  status?: string
   groups: any[]
   lastWorkspaceId?: string
   lastProjectId?: string
@@ -62,10 +63,10 @@ export const getWorkspaceMemberGroup = (workspaceId: string, userId: string) => 
 
 /**
  *  列表数据查询*/
-export const specialListUsers = (params: IUserSearch): Promise<IResultData<IPageResponse<IUserInfo>>> => {
+export const specialListUsers = async (params: IUserSearch): Promise<IResultData<IPageResponse<IUserInfo>>> => {
   const page = params.page
   const limit = params.limit
-  return service.post(`/user/special/list/${page}/${limit}`, params)
+  return await service.post(`/user/special/list/${page}/${limit}`, params)
 }
 
 export const specialGetUserGroup = (userId: string) => {
@@ -78,4 +79,7 @@ export const specialCreateUser = (param: IUserInfo) => {
 //* update user
 export const specialModifyUser = (param: IUserInfo) => {
   return service.post('/user/special/update', param)
+}
+export const specialModifyUserDisable = (param: IUserInfo) => {
+  return service.post('/user/special/update_status', param)
 }

@@ -124,4 +124,10 @@ public class SysUserController {
     public ResponseInfo<UserGroupPermissionDTO> getUserGroup(@PathVariable String userId) {
         return ResponseInfo.success(sysUserService.getUserGroup(userId));
     }
+
+    @PostMapping("/special/update_status")
+public ResponseInfo<String> updateUserStatus(@RequestBody SysUser user) {
+        sysUserService.updateUser(user);
+        return ResponseInfo.success();
+    }
 }

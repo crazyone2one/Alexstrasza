@@ -8,6 +8,7 @@ import { IGroup, IUserInfo, specialCreateUser, specialModifyUser } from '/@/apis
 import { getAllUserGroupByType, getUserAllGroups, ISystemGroup } from '/@/apis/modules/user-group'
 import { getGroupResource, IWorkspace } from '/@/apis/modules/workspace'
 import { IProject } from '/@/apis/modules/project'
+import CryptoJS from 'crypto-js'
 
 const { t } = useI18n()
 
@@ -48,6 +49,8 @@ const handleSubmit = (): void => {
     if (!errors) {
       console.log(model.value)
       if (type.value === 'Add') {
+        // 密码加密
+        model.value.password = CryptoJS.MD5(model.value.password as string).toString()
         specialCreateUser(model.value).then(() => {
           window.$message?.success(t('commons.save_success'))
           emits('refresh')
@@ -409,7 +412,12 @@ defineExpose({ openEditModal })
           <n-input v-model:value="model.phone" :placeholder="$t('user.input_phone')" />
         </n-form-item>
         <n-form-item v-if="type === 'Add'" :label="$t('commons.password')" path="password">
-          <n-input v-model:value="model.password" :placeholder="$t('user.input_password')" />
+          <n-input
+            v-model:value="model.password"
+            :placeholder="$t('user.input_password')"
+            type="password"
+            show-password-on="mousedown"
+          />
         </n-form-item>
         <div v-for="(group, index) in model.groups" :key="index">
           <n-form-item :label="getLabel(index)" :path="'groups.' + index + '.type'">

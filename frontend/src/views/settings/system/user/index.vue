@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DataTableColumns, NCard, NDataTable, NSpin, NSpace, NButton } from 'naive-ui'
+import { DataTableColumns, NCard, NDataTable, NSpin, NSpace, NButton, NSwitch } from 'naive-ui'
 import { ref, h, reactive, onMounted } from 'vue'
 import SearchComponent from '/@/components/SearchComponent.vue'
 import PaginationComponent from '/@/components/PaginationComponent.vue'
@@ -7,7 +7,7 @@ import ButtonComp from '/@/components/ButtonComponent.vue'
 import { IPageResponse } from '/@/apis/interface'
 import { useI18n } from 'vue-i18n'
 import DeleteComponent from '/@/components/DeleteComponent.vue'
-import { IUserInfo, specialGetUserGroup, specialListUsers } from '/@/apis/modules/user'
+import { IUserInfo, specialGetUserGroup, specialListUsers, specialModifyUserDisable } from '/@/apis/modules/user'
 import EditUserComp from './EditUserComp.vue'
 import RolesTagComponent from '/@/components/RolesTagComponent.vue'
 
@@ -32,6 +32,19 @@ const handleEdit = (param?: IUserInfo): void => {
   editUserComp.value?.openEditModal(param, param ? 'Edit' : 'Add', param ? t('user.modify') : t('user.create'))
 }
 const handleDelete = (param: IUserInfo) => {}
+// * 更新用户状态
+const switchLoading = ref(false)
+const handleChangeUserStatus = (param: IUserInfo) => {
+  switchLoading.value = true
+  specialModifyUserDisable(param)
+    .then(() => {
+      window.$message?.success(t('commons.modify_success'))
+      switchLoading.value = false
+    })
+    .finally(() => {
+      switchLoading.value = false
+    })
+}
 
 // * 创建列表表头
 const createColumns = (): DataTableColumns<IUserInfo> => {
@@ -47,13 +60,23 @@ const createColumns = (): DataTableColumns<IUserInfo> => {
       key: 'type',
       render(row) {
         // fixme: 渲染角色tag
-        return h(
-          RolesTagComponent,
-          {
-            roles: row.authorities ? row.authorities : [],
-          },
-          {}
-        )
+        return h('div', [
+          row.authorities
+            ? h(
+                RolesTagComponent,
+                {
+                  roles: row.authorities,
+                },
+                {}
+              )
+            : h(
+                RolesTagComponent,
+                {
+                  roles: [],
+                },
+                {}
+              ),
+        ])
       },
     },
     {
@@ -61,8 +84,26 @@ const createColumns = (): DataTableColumns<IUserInfo> => {
       key: 'email',
     },
     {
+      // fixme 在使用loading时，全部的switch标签都会使用
       title: t('commons.status'),
       key: 'status',
+      align: 'center',
+      render(row) {
+        return h(
+          NSwitch,
+          {
+            checkedValue: '1',
+            uncheckedValue: '0',
+            value: row.status,
+            loading: switchLoading.value,
+            onUpdateValue: (value: string) => {
+              row.status = value
+              handleChangeUserStatus(row)
+            },
+          },
+          {}
+        )
+      },
     },
     {
       title: t('commons.create_time'),
