@@ -5,10 +5,7 @@ import cn.master.backend.entity.SysProject;
 import cn.master.backend.entity.SysUser;
 import cn.master.backend.entity.UserDTO;
 import cn.master.backend.entity.UserGroupPermissionDTO;
-import cn.master.backend.request.AuthenticateRequest;
-import cn.master.backend.request.ProjectRequest;
-import cn.master.backend.request.QueryMemberRequest;
-import cn.master.backend.request.UserRequest;
+import cn.master.backend.request.*;
 import cn.master.backend.security.JwtUtils;
 import cn.master.backend.security.SecurityUser;
 import cn.master.backend.service.BaseCheckPermissionService;
@@ -126,8 +123,13 @@ public class SysUserController {
     }
 
     @PostMapping("/special/update_status")
-public ResponseInfo<String> updateUserStatus(@RequestBody SysUser user) {
+    public ResponseInfo<String> updateUserStatus(@RequestBody SysUser user) {
         sysUserService.updateUser(user);
         return ResponseInfo.success();
+    }
+
+    @PostMapping("/special/password")
+    public ResponseInfo<Integer> updateUserPassword(@RequestBody EditPassWordRequest request) {
+        return ResponseInfo.success(sysUserService.updateUserPassword(request));
     }
 }

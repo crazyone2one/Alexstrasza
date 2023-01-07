@@ -3,6 +3,7 @@ package cn.master.backend.service;
 import cn.master.backend.entity.SysUser;
 import cn.master.backend.entity.UserDTO;
 import cn.master.backend.entity.UserGroupPermissionDTO;
+import cn.master.backend.request.EditPassWordRequest;
 import cn.master.backend.request.QueryMemberRequest;
 import cn.master.backend.request.UserRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -103,4 +104,12 @@ public interface SysUserService extends IService<SysUser> {
      * @return java.lang.String
      */
     String updateUserRole(UserRequest request);
+
+    /**
+     * desc: update user's password
+     *
+     * @param request parameter
+     * @return java.lang.Integer
+     */
+    Integer updateUserPassword(EditPassWordRequest request);
 }

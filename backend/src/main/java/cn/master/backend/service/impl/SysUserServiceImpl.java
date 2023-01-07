@@ -8,6 +8,7 @@ import cn.master.backend.mapper.SysGroupMapper;
 import cn.master.backend.mapper.SysProjectMapper;
 import cn.master.backend.mapper.SysUserGroupMapper;
 import cn.master.backend.mapper.SysUserMapper;
+import cn.master.backend.request.EditPassWordRequest;
 import cn.master.backend.request.QueryMemberRequest;
 import cn.master.backend.request.UserRequest;
 import cn.master.backend.security.JwtUtils;
@@ -230,6 +231,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         baseMapper.updateById(request);
         return "updated successfully";
+    }
+
+    @Override
+    public Integer updateUserPassword(EditPassWordRequest request) {
+        SysUser sysUser = baseMapper.selectById(request.getId());
+        String password = passwordEncoder.encode(request.getNewPassword());
+        sysUser.setPassword(password);
+        return baseMapper.updateById(sysUser);
     }
 
     private List<SysProject> getProjectListByWsAndUserId(String userId, String sourceId) {

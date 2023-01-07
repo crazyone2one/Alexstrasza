@@ -83,3 +83,10 @@ export const specialModifyUser = (param: IUserInfo) => {
 export const specialModifyUserDisable = (param: IUserInfo) => {
   return service.post('/user/special/update_status', param)
 }
+/**
+ * 更新用户密码
+ * @param param 参数
+ */
+export const specialModifyPassword = (param: { id: string; newPassword: string; confirmPassword: string }) => {
+  return service.post('/user/special/password', param)
+}

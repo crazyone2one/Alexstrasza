@@ -10,12 +10,14 @@ import DeleteComponent from '/@/components/DeleteComponent.vue'
 import { IUserInfo, specialGetUserGroup, specialListUsers, specialModifyUserDisable } from '/@/apis/modules/user'
 import EditUserComp from './EditUserComp.vue'
 import RolesTagComponent from '/@/components/RolesTagComponent.vue'
+import EditPasswordComp from './EditPasswordComp.vue'
 
 const show = ref(false)
 const { t } = useI18n()
 
 const deleteComponent = ref<InstanceType<typeof DeleteComponent> | null>(null)
 const editUserComp = ref<InstanceType<typeof EditUserComp> | null>(null)
+const editPasswordComp = ref<InstanceType<typeof EditPasswordComp> | null>(null)
 const state = reactive({
   condition: { name: '', limit: 10, page: 1 },
 })
@@ -59,7 +61,7 @@ const createColumns = (): DataTableColumns<IUserInfo> => {
       align: 'center',
       key: 'type',
       render(row) {
-        // fixme: 渲染角色tag
+        // FIXME: 渲染角色tag
         return h('div', [
           row.authorities
             ? h(
@@ -147,6 +149,17 @@ const createColumns = (): DataTableColumns<IUserInfo> => {
                 },
                 { default: () => t('commons.delete') }
               ),
+              // TODO: change password
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                  text: true,
+                  onClick: () => handleUpdatePassword(row.id as string),
+                },
+                { default: () => t('member.edit_password') }
+              ),
             ],
           }
         )
@@ -189,6 +202,11 @@ const handlePageSize = (pageSize: number) => {
 const deleteWorkspace = (param: IUserInfo) => {
   console.log(param)
 }
+
+// * 编辑密码
+const handleUpdatePassword = (userId: string) => {
+  editPasswordComp.value?.openModal(userId)
+}
 onMounted(() => {
   loadTableData()
 })
@@ -213,6 +231,7 @@ onMounted(() => {
   </n-spin>
   <edit-user-comp ref="editUserComp" @refresh="loadTableData" />
   <delete-component ref="deleteComponent" :title="$t('workspace.delete')" @delete="deleteWorkspace" />
+  <edit-password-comp ref="editPasswordComp" @refresh="loadTableData" />
 </template>
 
 <style scoped></style>
