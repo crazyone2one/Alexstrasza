@@ -16,10 +16,14 @@ public class SecurityUser implements UserDetails {
     private String nickname;
     private String token;
     private String userId;
-    public SecurityUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    private String lastProjectId;
+    private String lastWorkspaceId;
+    public SecurityUser(String username, String password, Collection<? extends GrantedAuthority> authorities,String projectId,String workspaceId) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
+        this.lastProjectId = projectId;
+        this.lastWorkspaceId = workspaceId;
     }
     private Collection<? extends GrantedAuthority> authorities;
     @Override

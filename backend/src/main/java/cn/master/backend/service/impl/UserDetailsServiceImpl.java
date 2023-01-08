@@ -26,7 +26,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (Objects.isNull(sysUser)) {
             throw new UsernameNotFoundException("用户名错误/不存在");
         }
-        SecurityUser user = new SecurityUser(sysUser.getName(), sysUser.getPassword(), List.of(new SimpleGrantedAuthority("USER")));
+        SecurityUser user = new SecurityUser(sysUser.getName(),
+                sysUser.getPassword(),
+                List.of(new SimpleGrantedAuthority("USER")),
+                sysUser.getLastProjectId(),
+                sysUser.getLastWorkspaceId());
         user.setUserId(sysUser.getId());
         return user;
     }
