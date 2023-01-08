@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { NDropdown, SelectOption, DropdownOption } from 'naive-ui'
 import { useAppStore } from '/@/store/modules/app'
+import IconComponent from '../components/IconComponent.vue'
 
 import { useI18n } from 'vue-i18n'
 import { getUserWorkspaceList, IWorkspace, switchWorkspace } from '../apis/modules/workspace'
@@ -52,6 +53,13 @@ const handleSelect = (key: string | number, option: DropdownOption) => {
 }
 onMounted(() => {
   initMenuData()
+  if (!currentWorkspaceName.value) {
+    window.$notification?.warning({
+      title: '',
+      description: '还未选择工作空间',
+      duration: 2500,
+    })
+  }
 })
 watch(
   () => currentWorkspaceName.value,
@@ -61,9 +69,13 @@ watch(
 )
 </script>
 <template>
-  <n-dropdown trigger="hover" :options="options" @select="handleSelect">
+  <n-dropdown v-if="currentWorkspaceName" trigger="hover" :options="options" @select="handleSelect">
     <!-- <n-button>找个地方休息</n-button> -->
     <span class="dropdown-link">{{ currentWorkspaceName }}</span>
+  </n-dropdown>
+  <!-- 用户未选择工作空间的情况下使用红色帮助图标，以突出显示 -->
+  <n-dropdown v-else trigger="hover" :options="options" @select="handleSelect">
+    <icon-component type="help" size="25" color="red" />
   </n-dropdown>
 </template>
 
