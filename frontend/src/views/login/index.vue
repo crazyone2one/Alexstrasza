@@ -3,10 +3,11 @@
 import { NForm, NFormItemRow, NInput, NButton, FormInst } from 'naive-ui'
 import { ref } from 'vue'
 import CryptoJS from 'crypto-js'
-import { loginApi } from '/@/apis/modules/user'
+import { IUserInfo, loginApi } from '/@/apis/modules/user'
 import { useUserInfoStore } from '/@/store/modules/user'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useAppStore } from '/@/store/modules/app'
 
 interface ModelType {
   name: string | null
@@ -15,6 +16,7 @@ interface ModelType {
 }
 const { t } = useI18n()
 const userInfo = useUserInfoStore()
+const appState = useAppStore()
 const formRef = ref<FormInst | null>(null)
 const model = ref<ModelType>({
   name: null,
@@ -28,6 +30,7 @@ const router = useRouter()
  */
 const handleLogin = async (e: Event) => {
   e.preventDefault()
+
   loading.value = true
   formRef.value?.validate((errors) => {
     if (!errors) {
@@ -42,6 +45,7 @@ const handleLogin = async (e: Event) => {
           state.user.username = resp.data.username
           state.user.permissions = resp.data.authorities as []
         })
+        saveSessionStorage(resp.data)
         loading.value = false
         const route = router.currentRoute.value
         const redirect = route.query.redirect?.toString()
@@ -54,6 +58,19 @@ const handleLogin = async (e: Event) => {
       })
     }
   })
+}
+// * 保存缓存信息
+const saveSessionStorage = (param: IUserInfo) => {
+  appState.resetAppStore()
+  const currentProjectId = appState.getProjectId()
+  if (!currentProjectId) {
+    appState.setProjectId(param.lastProjectId as string)
+  } else {
+    // TODO:根据用户的权限设置project id
+  }
+  if (!appState.getWorkspaceId()) {
+    appState.setWorkspaceId(param.lastWorkspaceId as string)
+  }
 }
 </script>
 <template>

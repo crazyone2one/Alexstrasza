@@ -39,6 +39,12 @@ export const useAppStore = defineStore(
     const getWorkspaceName = (): string => {
       return app.value.workspaceName
     }
+    // * 重置信息
+    const resetAppStore = () => {
+      app.value.currentWorkspaceId = ''
+      app.value.currentProjectId = ''
+      app.value.workspaceName = ''
+    }
     return {
       app,
       setCollapsed,
@@ -48,6 +54,7 @@ export const useAppStore = defineStore(
       getWorkspaceId,
       setWorkspaceName,
       getWorkspaceName,
+      resetAppStore,
     }
   },
   {

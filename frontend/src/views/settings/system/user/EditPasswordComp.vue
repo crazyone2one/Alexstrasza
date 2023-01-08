@@ -35,7 +35,6 @@ const handleSubmit = (): void => {
         newPassword: CryptoJS.MD5(model.value.newPassword as string).toString(),
         confirmPassword: CryptoJS.MD5(model.value.confirmPassword as string).toString(),
       }
-      model.value.newPassword = CryptoJS.MD5(model.value.newPassword as string).toString()
       specialModifyPassword(param).then(() => {
         window.$message?.success(t('commons.modify_success'))
         // TODO: 若更新的是当前的用户，则退出重新登录
