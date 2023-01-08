@@ -29,6 +29,7 @@ const handleSubmit = () => {
 // * 打开编辑框
 const openDeleteModal = (param: { name: string }): void => {
   modalDialog.value?.toggleModal()
+  deleteValue.value = ''
   record.value = param
 }
 defineExpose({ openDeleteModal })
