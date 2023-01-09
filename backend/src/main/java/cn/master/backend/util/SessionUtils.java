@@ -1,9 +1,7 @@
 package cn.master.backend.util;
 
 import cn.master.backend.security.JwtUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -14,7 +12,6 @@ import java.util.Objects;
  * @author create by 11's papa on 2023/1/5-13:07
  */
 @Slf4j
-
 public class SessionUtils {
     public static String getCurrentWorkspaceId() {
         try {
@@ -28,6 +25,7 @@ public class SessionUtils {
         }
         return "";
     }
+
     public static String getCurrentProjectId() {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
@@ -38,5 +36,13 @@ public class SessionUtils {
         } catch (IllegalStateException e) {
             throw new RuntimeException(e);
         }
-        return "";}
+        return "";
+    }
+
+    public static String getUserId() {
+        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
+        JwtUtils jwtUtils = SpringContextUtils.getBean(JwtUtils.class);
+        assert jwtUtils != null;
+        return jwtUtils.getUserIdFromToken(request);
+    }
 }
