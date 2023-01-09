@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.master.backend.mapper.CustomFieldMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.master.backend.entity.CustomField">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="scene" property="scene" />
+        <result column="type" property="type" />
+        <result column="remark" property="remark" />
+        <result column="options" property="options" />
+        <result column="system" property="system" />
+        <result column="global" property="global" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="project_id" property="projectId" />
+        <result column="third_part" property="thirdPart" />
+        <result column="create_user" property="createUser" />
+    </resultMap>
+    <select id="selectPageVO" resultType="cn.master.backend.entity.CustomField">
+        select id, `name`, scene, `type`, remark, `system`, `global`, create_time, update_time,
+               create_user, project_id, third_part,`options` from custom_field cf
+        <where>
+            <if test="request.name != null">
+                and cf.name LIKE CONCAT('%', #{request.name}, '%')
+            </if>
+
+            <if test="request.workspaceId != null">
+                and (
+                cf.workspace_id = #{request.workspaceId}
+                or (
+                cf.global = 1 and
+                not exists (
+                select id
+                from custom_field cf_child
+                where cf_child.name = cf.name and cf_child.scene = cf.scene and cf_child.global != 1 and cf_child.workspace_id = #{request.workspaceId}
+                )
+                )
+                )
+            </if>
+            <if test="request.projectId != null">
+                and (
+                cf.project_id = #{request.projectId}
+                or (
+                cf.global = 1 and
+                not exists (
+                select id
+                from custom_field cf_child
+                where cf_child.name = cf.name and cf_child.scene = cf.scene and cf_child.global != 1 and cf_child.project_id = #{request.projectId}
+                )
+                )
+                )
+            </if>
+
+            <if test="request.ids != null and request.ids.size() > 0">
+                and cf.id in
+                <foreach collection="request.ids" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+
+<!--            <if test="request.templateContainIds != null and request.templateContainIds.size() > 0">-->
+<!--                and cf.id not in-->
+<!--                <foreach collection="request.templateContainIds" item="id" separator="," open="(" close=")">-->
+<!--                    #{id}-->
+<!--                </foreach>-->
+<!--            </if>-->
+
+
+        </where>
+        <if test="request.orders != null and request.orders.size() > 0">
+            order by
+            <foreach collection="request.orders" separator="," item="order">
+                <choose>
+                    <when test="order.prefix != null and order.prefix != ''">
+                        ${order.prefix}.`${order.name}` ${order.type}
+                    </when>
+                    <when test="order.name ==  'user_name' ">
+                        `user_id` ${order.type}
+                    </when>
+                    <otherwise>
+                        `${order.name}` ${order.type}
+                    </otherwise>
+                </choose>
+            </foreach>
+        </if>
+    </select>
+
+</mapper>
