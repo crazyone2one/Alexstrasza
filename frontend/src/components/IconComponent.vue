@@ -20,6 +20,7 @@ import {
   SearchCircle as search,
   LockClosed as lock,
   Checkmark as check,
+  NewspaperOutline as track,
 } from '@vicons/ionicons5'
 const icons = {
   refresh,
@@ -41,6 +42,7 @@ const icons = {
   search,
   lock,
   check,
+  track,
 }
 type IconTypes = keyof typeof icons
 const props = defineProps({
