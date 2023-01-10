@@ -6,6 +6,7 @@ export interface IAppState {
   currentWorkspaceId: string
   currentProjectId: string
   workspaceName: string
+  projectName: string
 }
 
 export const useAppStore = defineStore(
@@ -16,6 +17,7 @@ export const useAppStore = defineStore(
       currentWorkspaceId: '',
       currentProjectId: '',
       workspaceName: '',
+      projectName: '',
     })
     const setCollapsed = (): void => {
       app.value.sidebarCollapsed = !app.value.sidebarCollapsed
@@ -39,11 +41,18 @@ export const useAppStore = defineStore(
     const getWorkspaceName = (): string => {
       return app.value.workspaceName
     }
+    const setProjectName = (val: string): void => {
+      app.value.projectName = val
+    }
+    const getProjectName = (): string => {
+      return app.value.projectName
+    }
     // * 重置信息
     const resetAppStore = () => {
       app.value.currentWorkspaceId = ''
       app.value.currentProjectId = ''
       app.value.workspaceName = ''
+      app.value.projectName = ''
     }
     return {
       app,
@@ -55,6 +64,8 @@ export const useAppStore = defineStore(
       setWorkspaceName,
       getWorkspaceName,
       resetAppStore,
+      setProjectName,
+      getProjectName,
     }
   },
   {

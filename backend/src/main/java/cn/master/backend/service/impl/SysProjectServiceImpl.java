@@ -10,6 +10,8 @@ import cn.master.backend.request.AddProjectRequest;
 import cn.master.backend.request.ProjectRequest;
 import cn.master.backend.security.JwtUtils;
 import cn.master.backend.service.SysProjectService;
+import cn.master.backend.util.ServiceUtils;
+import cn.master.backend.util.SessionUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -94,6 +96,22 @@ public class SysProjectServiceImpl extends ServiceImpl<SysProjectMapper, SysProj
         LambdaQueryWrapper<SysProject> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysProject::getCaseTemplateId, templateId);
         return baseMapper.selectList(wrapper);
+    }
+
+    @Override
+    public List<SysProject> getUserProject(ProjectRequest request) {
+        boolean superUser = sysUserMapper.isSuperUser(SessionUtils.getUserId());
+        if (superUser) {
+            LambdaQueryWrapper<SysProject> wrapper = new LambdaQueryWrapper<>();
+            wrapper.like(StringUtils.isNoneBlank(request.getName()), SysProject::getName, request.getName());
+            wrapper.eq(StringUtils.isNoneBlank(request.getWorkspaceId()), SysProject::getWorkspaceId, request.getWorkspaceId());
+            return baseMapper.selectList(wrapper);
+        }
+        if (StringUtils.isNotBlank(request.getName())) {
+            request.setName(StringUtils.wrapIfMissing(request.getName(), "%"));
+        }
+        request.setOrders(ServiceUtils.getDefaultOrder(request.getOrders()));
+        return baseMapper.getUserProject(request);
     }
 
     private void deleteProjectUserGroup(String projectId) {

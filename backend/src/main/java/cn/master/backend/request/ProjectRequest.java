@@ -18,4 +18,5 @@ public class ProjectRequest {
     private String name;
     private Map<String, List<String>> filters;
     private Map<String, Object> combine;
+    private List<OrderRequest> orders;
 }

@@ -60,3 +60,14 @@ export const modifyProject = (param: IProject): Promise<IResultData<IProject>> =
 export const delProjectById = (projectId: string) => {
   return service.get(`/project/delete/${projectId}`)
 }
+
+export const getUserProjectList = (param: {
+  userId: string
+  workspaceId: string
+}): Promise<IResultData<IProject[]>> => {
+  return service.post(`/project/list/related`, param)
+}
+
+export const switchProject = (param: { id: string; lastProjectId: string }): Promise<IResultData<IUserInfo>> => {
+  return service.post(`/user/update/current`, param)
+}

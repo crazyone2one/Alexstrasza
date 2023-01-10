@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,5 +55,10 @@ public class SysProjectController {
     @GetMapping("/delete/{projectId}")
     public ResponseInfo<String> deleteProject(@PathVariable String projectId) {
         return ResponseInfo.success(service.deleteProject(projectId));
+    }
+
+    @PostMapping("/list/related")
+    public ResponseInfo<List<SysProject>> getUserProject(@RequestBody ProjectRequest request) {
+        return ResponseInfo.success(service.getUserProject(request));
     }
 }

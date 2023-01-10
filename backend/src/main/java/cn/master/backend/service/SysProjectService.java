@@ -62,4 +62,12 @@ public interface SysProjectService extends IService<SysProject> {
      * @return java.util.List<cn.master.backend.entity.SysProject>
      */
     List<SysProject> getByCaseTemplateId(String templateId);
+
+    /**
+     * desc: search project by user
+     *
+     * @param request parameter
+     * @return java.util.List<cn.master.backend.entity.SysProject>
+     */
+    List<SysProject> getUserProject(ProjectRequest request);
 }

@@ -25,5 +25,21 @@
         <result column="jira_key" property="jiraKey" />
         <result column="zentao_id" property="zentaoId" />
     </resultMap>
+    <select id="getUserProject" resultType="cn.master.backend.entity.SysProject">
+        SELECT DISTINCT p.*
+        FROM `sys_group` g
+        JOIN sys_user_group ug ON g.id = ug.group_id
+        JOIN sys_project p ON p.id = ug.source_id
+        <where>
+            g.type = 'PROJECT'
+            AND ug.user_id = #{proRequest.userId}
+            <if test="proRequest.workspaceId != null and proRequest.workspaceId != ''">
+                AND p.workspace_id = #{proRequest.workspaceId}
+            </if>
+            <if test="proRequest.name != null and proRequest.name != ''">
+                AND p.name LIKE #{proRequest.name, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
 
 </mapper>

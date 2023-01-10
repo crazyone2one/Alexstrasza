@@ -1,6 +1,7 @@
 package cn.master.backend.mapper;
 
 import cn.master.backend.entity.SysProject;
+import cn.master.backend.request.ProjectRequest;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,6 +9,8 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.apache.ibatis.type.JdbcType;
+
+import java.util.List;
 
 /**
  * <p>
@@ -40,4 +43,6 @@ public interface SysProjectMapper extends BaseMapper<SysProject> {
 
     @Select(" SELECT MAX(system_id) from sys_project")
     String getMaxSystemId();
+
+    List<SysProject> getUserProject(@Param("proRequest") ProjectRequest request);
 }
