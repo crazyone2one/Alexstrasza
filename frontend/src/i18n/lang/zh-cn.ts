@@ -2262,4 +2262,10 @@ export default {
     fields_to_be_selected: '待选字段',
     selected_fields: '已选字段',
   },
+  i18n: {
+    home: '首页',
+    definition: '接口定义',
+    automation: '接口自动化',
+    report: '测试报告',
+  },
 }

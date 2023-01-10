@@ -2292,4 +2292,10 @@ export default {
     fields_to_be_selected: 'Fields to be selected',
     selected_fields: 'Selected fields',
   },
+  i18n: {
+    home: 'Home',
+    definition: 'Api Definition',
+    automation: 'Api Automation',
+    report: 'Test Report',
+  },
 }
