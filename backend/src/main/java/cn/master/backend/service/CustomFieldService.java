@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 自定义字段表 服务类
@@ -40,4 +42,12 @@ public interface CustomFieldService extends IService<CustomField> {
      * @return java.lang.String
      */
     String deleteCustomField(String id);
+
+    /**
+     * desc: default field
+     *
+     * @param request parameter
+     * @return java.util.List<cn.master.backend.entity.CustomField>
+     */
+    List<CustomField> getDefaultField(QueryCustomFieldRequest request);
 }

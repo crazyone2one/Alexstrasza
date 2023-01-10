@@ -112,4 +112,6 @@ public interface SysUserService extends IService<SysUser> {
      * @return java.lang.Integer
      */
     Integer updateUserPassword(EditPassWordRequest request);
+
+    List<SysUser> getProjectMemberOption(String projectId);
 }

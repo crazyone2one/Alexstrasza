@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,4 +54,12 @@ public interface SysProjectService extends IService<SysProject> {
      * @return java.lang.String
      */
     String deleteProject(String projectId);
+
+    /**
+     * desc: 根据测试用例模板id查询
+     *
+     * @param templateId test case template id
+     * @return java.util.List<cn.master.backend.entity.SysProject>
+     */
+    List<SysProject> getByCaseTemplateId(String templateId);
 }

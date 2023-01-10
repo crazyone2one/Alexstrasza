@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -86,6 +87,13 @@ public class SysProjectServiceImpl extends ServiceImpl<SysProjectMapper, SysProj
         deleteProjectUserGroup(projectId);
         baseMapper.deleteById(projectId);
         return null;
+    }
+
+    @Override
+    public List<SysProject> getByCaseTemplateId(String templateId) {
+        LambdaQueryWrapper<SysProject> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysProject::getCaseTemplateId, templateId);
+        return baseMapper.selectList(wrapper);
     }
 
     private void deleteProjectUserGroup(String projectId) {

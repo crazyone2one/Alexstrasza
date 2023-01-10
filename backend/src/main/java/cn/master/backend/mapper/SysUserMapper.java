@@ -56,4 +56,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
     @MapKey("id")
     Map<String, SysUser> queryNameByIds(List<String> userIds);
+
+    @Select("SELECT DISTINCT * from (SELECT u.id, u.name, u.email  FROM sys_user_group ug JOIN `sys_user` u  ON ug.user_id = u.id WHERE ug.source_id = #{projectId} ORDER BY u.update_time DESC) temp")
+    List<SysUser> getProjectMemberOption(String projectId);
 }

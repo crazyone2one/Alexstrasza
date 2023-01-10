@@ -17,7 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -56,6 +59,31 @@ public class CustomFieldServiceImpl extends ServiceImpl<CustomFieldMapper, Custo
         return "delete successfully:" + id;
     }
 
+    @Override
+    public List<CustomField> getDefaultField(QueryCustomFieldRequest request) {
+        LambdaQueryWrapper<CustomField> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CustomField::getSystem, true).eq(CustomField::getScene, request.getScene());
+        wrapper.eq(CustomField::getProjectId,request.getProjectId());
+        List<CustomField> customFields = baseMapper.selectList(wrapper);
+        Set<String> workspaceSystemFieldNames = customFields.stream()
+                .map(CustomField::getName)
+                .collect(Collectors.toSet());
+        List<CustomField> globalFields = getGlobalField(request.getScene());
+        // 工作空间的系统字段加上全局的字段
+        globalFields.forEach(item -> {
+            if (!workspaceSystemFieldNames.contains(item.getName())) {
+                customFields.add(item);
+            }
+        });
+        return customFields;
+    }
+
+    private List<CustomField> getGlobalField(String scene) {
+        LambdaQueryWrapper<CustomField> wrapper = new LambdaQueryWrapper<CustomField>()
+                .eq(CustomField::getGlobal, true)
+                .eq(CustomField::getScene, scene);
+        return baseMapper.selectList(wrapper);
+    }
     private void checkExist(CustomField customField) {
         if (Objects.nonNull(customField.getName())) {
             LambdaQueryWrapper<CustomField> wrapper = new LambdaQueryWrapper<>();

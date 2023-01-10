@@ -241,6 +241,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return baseMapper.updateById(sysUser);
     }
 
+    @Override
+    public List<SysUser> getProjectMemberOption(String projectId) {
+        return baseMapper.getProjectMemberOption(projectId);
+    }
+
     private List<SysProject> getProjectListByWsAndUserId(String userId, String sourceId) {
         LambdaQueryWrapper<SysProject> projectWrapper = new LambdaQueryWrapper<SysProject>().eq(SysProject::getWorkspaceId, sourceId);
         List<SysProject> projects = sysProjectMapper.selectList(projectWrapper);

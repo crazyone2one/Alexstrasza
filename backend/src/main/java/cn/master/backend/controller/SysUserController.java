@@ -132,4 +132,9 @@ public class SysUserController {
     public ResponseInfo<Integer> updateUserPassword(@RequestBody EditPassWordRequest request) {
         return ResponseInfo.success(sysUserService.updateUserPassword(request));
     }
+
+    @GetMapping("/project/member/option/{projectId}")
+    public ResponseInfo<List<SysUser>> getProjectMemberOption(@PathVariable String projectId) {
+        return ResponseInfo.success(sysUserService.getProjectMemberOption(projectId));
+    }
 }

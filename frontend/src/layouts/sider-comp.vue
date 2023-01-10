@@ -33,6 +33,18 @@ const menus = ref([
     name: 'dashboard',
   },
   {
+    id: '610159148224d543ae4e05d2',
+    label: t('commons.project_setting'),
+    icon: 'settings',
+    children: [
+      {
+        id: '610159148224d543ae4e05d2-1',
+        label: t('workspace.template_manage'),
+        name: 'template',
+      },
+    ],
+  },
+  {
     id: '610159148224d543ae4e05d3',
     label: t('commons.system_setting'),
     icon: 'settings',

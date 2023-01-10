@@ -1,3 +1,4 @@
+import { i18n } from '../i18n'
 type IUserGroupScope = {
   [key: string]: string
 }
@@ -7,3 +8,62 @@ export const USER_GROUP_SCOPE: IUserGroupScope = {
   PROJECT: 'group.project',
   PERSONAL: 'group.personal',
 }
+
+export const FIELD_TYPE_MAP: { [key: string]: string } = {
+  input: 'workspace.custom_filed.input',
+  textarea: 'workspace.custom_filed.textarea',
+  select: 'workspace.custom_filed.select',
+  multipleSelect: 'workspace.custom_filed.multipleSelect',
+  radio: 'workspace.custom_filed.radio',
+  checkbox: 'workspace.custom_filed.checkbox',
+  member: 'workspace.custom_filed.member',
+  multipleMember: 'workspace.custom_filed.multipleMember',
+  date: 'workspace.custom_filed.date',
+  datetime: 'workspace.custom_filed.datetime',
+  richText: 'workspace.custom_filed.richText',
+  int: 'workspace.custom_filed.int',
+  float: 'workspace.custom_filed.float',
+  multipleInput: 'workspace.custom_filed.multipleInput',
+}
+export const SCENE_MAP: { [key: string]: string } = {
+  ISSUE: 'workspace.issue_template_manage',
+  TEST_CASE: 'workspace.case_template_manage',
+  PLAN: 'workstation.table_name.track_plan',
+  API: 'workspace.api_template_manage',
+}
+export const SYSTEM_FIELD_NAME_MAP: { [key: string]: string } = {
+  //用例字段
+  用例状态: 'custom_field.case_status',
+  责任人: 'custom_field.case_maintainer',
+  用例等级: 'custom_field.case_priority',
+  //缺陷字段
+  创建人: 'custom_field.issue_creator',
+  处理人: 'custom_field.issue_processor',
+  状态: 'custom_field.issue_status',
+  严重程度: 'custom_field.issue_severity',
+  // 测试计划
+  测试阶段: 'test_track.plan.plan_stage',
+}
+export const CUSTOM_FIELD_SCENE_OPTION = [
+  { value: 'TEST_CASE', text: 'workspace.case_template_manage' },
+  { value: 'ISSUE', text: 'workspace.issue_template_manage' },
+  { value: 'PLAN', text: 'workstation.table_name.track_plan' },
+  { value: 'API', text: 'workspace.api_template_manage' },
+]
+export const CUSTOM_FIELD_TYPE_OPTION = [
+  { value: 'input', text: 'workspace.custom_filed.input' },
+  { value: 'textarea', text: 'workspace.custom_filed.textarea' },
+  { value: 'select', text: 'workspace.custom_filed.select', hasOption: true },
+  { value: 'multipleSelect', text: 'workspace.custom_filed.multipleSelect', hasOption: true },
+  { value: 'radio', text: 'workspace.custom_filed.radio', hasOption: true },
+  { value: 'checkbox', text: 'workspace.custom_filed.checkbox', hasOption: true },
+  { value: 'member', text: 'workspace.custom_filed.member', hasOption: true },
+  { value: 'multipleMember', text: 'workspace.custom_filed.multipleMember', hasOption: true },
+  { value: 'date', text: 'workspace.custom_filed.date' },
+  { value: 'datetime', text: 'workspace.custom_filed.datetime' },
+  { value: 'richText', text: 'workspace.custom_filed.richText' },
+  { value: 'int', text: 'workspace.custom_filed.int' },
+  { value: 'float', text: 'workspace.custom_filed.float' },
+  { value: 'multipleInput', text: 'workspace.custom_filed.multipleInput' },
+]
+export const CUSTOM_FIELD_LIST = new Set(['name', 'scene', 'type', 'remark', 'system', 'createTime', 'updateTime'])

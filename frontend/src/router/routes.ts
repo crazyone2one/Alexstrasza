@@ -54,6 +54,15 @@ const mainRoutes: RouteRecordRaw[] = [
       requiresAuth: true,
     },
   },
+  {
+    name: 'template',
+    path: 'template',
+    component: () => import('/@/views/project/template/index.vue'),
+    meta: {
+      title: 'template',
+      requiresAuth: true,
+    },
+  },
 ]
 const routes: RouteRecordRaw[] = [
   {

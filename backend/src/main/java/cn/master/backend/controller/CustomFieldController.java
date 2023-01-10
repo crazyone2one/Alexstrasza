@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,5 +46,10 @@ public class CustomFieldController {
     @GetMapping("/delete/{id}")
     public ResponseInfo<String> delete(@PathVariable String id) {
         return ResponseInfo.success(service.deleteCustomField(id));
+    }
+
+    @PostMapping("/default")
+    public ResponseInfo<List<CustomField>> getDefaultList(@RequestBody QueryCustomFieldRequest request) {
+        return ResponseInfo.success(service.getDefaultField(request));
     }
 }

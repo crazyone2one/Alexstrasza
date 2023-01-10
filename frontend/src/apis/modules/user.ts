@@ -90,3 +90,7 @@ export const specialModifyUserDisable = (param: IUserInfo) => {
 export const specialModifyPassword = (param: { id: string; newPassword: string; confirmPassword: string }) => {
   return service.post('/user/special/password', param)
 }
+
+export const getProjectMemberOption = (projectId: string): Promise<IResultData<IUserInfo[]>> => {
+  return service.get(`/user/project/member/option/${projectId}`)
+}
