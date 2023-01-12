@@ -117,7 +117,6 @@ const createColumns = (): DataTableColumns<IProject> => {
                 },
                 { default: () => t('commons.edit') }
               ),
-
               h(
                 NPopconfirm,
                 {
