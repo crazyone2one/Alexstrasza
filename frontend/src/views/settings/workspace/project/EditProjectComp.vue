@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, getCurrentInstance } from 'vue'
 import ModalComponent from '/@/components/ModalComponent.vue'
 import { useI18n } from 'vue-i18n'
 import { NForm, NFormItem, NInput, FormInst, NSelect } from 'naive-ui'
@@ -10,6 +10,7 @@ import { useUserInfoStore } from '/@/store/modules/user'
 import { getCurrentUser } from '/@/apis/modules/user'
 
 const { t } = useI18n()
+const instance = getCurrentInstance()
 const appStore = useAppStore()
 const userStore = useUserInfoStore()
 const title = ref<string>(t('project.create'))
@@ -76,12 +77,12 @@ const handleSubmit = (): void => {
           modalDialog.value?.closeModal()
           // 添加项目后重新加载一次用户信息
           getCurrentUser(userStore.getSessionUser().id).then((resp) => {
-            userStore.$patch((state) => {
-              state.user.id = resp.data.id as string
-              state.user.token = resp.data.token as string
-              state.user.username = resp.data.name
-              state.user.permissions = resp.data.authorities as []
-            })
+            // userStore.$patch((state) => {
+            //   state.user.id = resp.data.id as string
+            //   state.user.token = resp.data.token as string
+            //   state.user.username = resp.data.name
+            //   state.user.permissions = resp.data.authorities as []
+            // })
             appStore.$patch((state) => {
               state.app.currentProjectId = resp.data.lastProjectId as string
               state.app.currentWorkspaceId = resp.data.lastWorkspaceId as string
@@ -90,6 +91,7 @@ const handleSubmit = (): void => {
           emits('refresh')
         })
       }
+      instance?.proxy?.$Bus.emit('projectChange', 'abc')
     } else {
       return false
     }
