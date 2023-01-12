@@ -33,6 +33,23 @@ const menus = ref([
     name: 'dashboard',
   },
   {
+    id: '610159148224d543ae4e05b1',
+    label: t('test_track.test_track'),
+    icon: 'track',
+    children: [
+      {
+        id: '610159148224d543ae4e05b2',
+        label: t('i18n.home'),
+        name: 'track/home',
+      },
+      {
+        id: '610159148224d543ae4e05b3',
+        label: t('test_track.case.test_case'),
+        name: 'track/case/all',
+      },
+    ],
+  },
+  {
     id: '610159148224d543ae4e05d2',
     label: t('commons.project_setting'),
     icon: 'settings',
