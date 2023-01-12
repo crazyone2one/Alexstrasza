@@ -70,4 +70,6 @@ public interface SysProjectService extends IService<SysProject> {
      * @return java.util.List<cn.master.backend.entity.SysProject>
      */
     List<SysProject> getUserProject(ProjectRequest request);
+
+    List<SysProject> getProjectByIds(List<String> ids);
 }

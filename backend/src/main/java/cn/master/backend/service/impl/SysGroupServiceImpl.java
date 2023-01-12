@@ -8,6 +8,7 @@ import cn.master.backend.entity.WorkspaceResource;
 import cn.master.backend.mapper.SysGroupMapper;
 import cn.master.backend.mapper.SysUserGroupMapper;
 import cn.master.backend.request.EditGroupRequest;
+import cn.master.backend.request.GroupRequest;
 import cn.master.backend.security.JwtUtils;
 import cn.master.backend.service.SysGroupService;
 import cn.master.backend.service.SysWorkspaceService;
@@ -118,6 +119,19 @@ public class SysGroupServiceImpl extends ServiceImpl<SysGroupMapper, SysGroup> i
         List<UserGroupDTO> userGroup = sysUserGroupMapper.getUserGroup(id, request.getProjectId());
         List<String> groupTypeList = userGroup.stream().map(UserGroupDTO::getType).distinct().collect(Collectors.toList());
         return getGroups(groupTypeList, request,producePage);
+    }
+
+    @Override
+    public List<SysGroup> getGroupsByType(GroupRequest request) {
+        String resourceId = request.getResourceId();
+        String type = request.getType();
+        List<String> scopeList = Arrays.asList(GLOBAL, resourceId);
+        if (StringUtils.equals(type, UserGroupType.PROJECT) && StringUtils.isNotBlank(request.getProjectId())) {
+            scopeList = Arrays.asList(GLOBAL, resourceId, request.getProjectId());
+        }
+        LambdaQueryWrapper<SysGroup> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(SysGroup::getScopeId, scopeList).eq(SysGroup::getType, type);
+        return baseMapper.selectList(wrapper);
     }
 
     private IPage<SysGroup> getGroups(List<String> groupTypeList, EditGroupRequest request, Page<SysGroup> producePage) {

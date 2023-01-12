@@ -8,6 +8,7 @@ import cn.master.backend.mapper.SysGroupMapper;
 import cn.master.backend.mapper.SysProjectMapper;
 import cn.master.backend.mapper.SysUserGroupMapper;
 import cn.master.backend.mapper.SysUserMapper;
+import cn.master.backend.request.AddMemberRequest;
 import cn.master.backend.request.EditPassWordRequest;
 import cn.master.backend.request.QueryMemberRequest;
 import cn.master.backend.request.UserRequest;
@@ -20,6 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,10 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +41,7 @@ import java.util.stream.Collectors;
  * @since 2022-12-27
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
@@ -50,6 +50,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     final SysUserGroupMapper sysUserGroupMapper;
     final SysGroupMapper sysGroupMapper;
     final SysProjectMapper sysProjectMapper;
+    final SysUserMapper sysUserMapper;
     private final static String DEFAULT_PASSWORD = "e10adc3949ba59abbe56e057f20f883e";
 
     @Override
@@ -244,6 +245,67 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public List<SysUser> getProjectMemberOption(String projectId) {
         return baseMapper.getProjectMemberOption(projectId);
+    }
+
+    @Override
+    public List<SysUser> getUserList() {
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<SysUser>().orderByDesc(SysUser::getUpdateTime);
+        return baseMapper.selectList(wrapper);
+    }
+
+    @Override
+    public String addWorkspaceMember(AddMemberRequest request) {
+        addGroupMember("WORKSPACE", request.getWorkspaceId(), request.getUserIds(), request.getGroupIds());
+        return "添加完成";
+    }
+
+    private void addGroupMember(String type, String sourceId, List<String> userIds, List<String> groupIds) {
+        if (!StringUtils.equalsAny(type, "PROJECT", "WORKSPACE") || StringUtils.isBlank(sourceId)
+                || CollectionUtils.isEmpty(userIds) || CollectionUtils.isEmpty(groupIds)) {
+            log.warn("add member warning, please check param!");
+            return;
+        }
+        List<String> dbOptionalGroupIds = getGroupIdsByType(type, sourceId);
+        for (String userId : userIds) {
+            SysUser sysUser = sysUserMapper.selectById(userId);
+            if (Objects.isNull(sysUser)) {
+                log.warn("add member warning, invalid user id:" + userId);
+                continue;
+            }
+            List<String> toAddGroupIds = new ArrayList<>(groupIds);
+            List<String> existGroupIds = getUserExistSourceGroup(userId, sourceId);
+            toAddGroupIds.removeAll(existGroupIds);
+            toAddGroupIds.retainAll(dbOptionalGroupIds);
+            if (CollectionUtils.isEmpty(toAddGroupIds)) {
+                log.warn("group ids not in db or not has permission, please check!");
+                continue;
+            }
+            for (String groupId : toAddGroupIds) {
+                SysUserGroup sysUserGroup = SysUserGroup.builder().userId(userId).groupId(groupId).sourceId(sourceId).build();
+                sysUserGroupMapper.insert(sysUserGroup);
+            }
+        }
+    }
+
+    private List<String> getUserExistSourceGroup(String userId, String sourceId) {
+        LambdaQueryWrapper<SysUserGroup> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUserGroup::getUserId, userId).eq(SysUserGroup::getSourceId, sourceId);
+        List<SysUserGroup> userGroups = sysUserGroupMapper.selectList(wrapper);
+        return userGroups.stream().map(SysUserGroup::getGroupId).collect(Collectors.toList());
+    }
+
+    private List<String> getGroupIdsByType(String type, String sourceId) {
+        List<String> scopeList = Arrays.asList("global", sourceId);
+        if (StringUtils.equals(type, "PROJECT")) {
+            SysProject sysProject = sysProjectMapper.selectById(sourceId);
+            if (Objects.nonNull(sysProject)) {
+                scopeList = Arrays.asList("global", sourceId, sysProject.getWorkspaceId());
+            }
+        }
+        LambdaQueryWrapper<SysGroup> groupLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        groupLambdaQueryWrapper.in(SysGroup::getScopeId, scopeList).eq(SysGroup::getType, type);
+        List<SysGroup> groups = sysGroupMapper.selectList(groupLambdaQueryWrapper);
+        return groups.stream().map(SysGroup::getId).collect(Collectors.toList());
     }
 
     private List<SysProject> getProjectListByWsAndUserId(String userId, String sourceId) {

@@ -114,6 +114,13 @@ public class SysProjectServiceImpl extends ServiceImpl<SysProjectMapper, SysProj
         return baseMapper.getUserProject(request);
     }
 
+    @Override
+    public List<SysProject> getProjectByIds(List<String> ids) {
+        LambdaQueryWrapper<SysProject> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(SysProject::getId, ids);
+        return baseMapper.selectList(wrapper);
+    }
+
     private void deleteProjectUserGroup(String projectId) {
         LambdaQueryWrapper<SysUserGroup> wrapper = new LambdaQueryWrapper<SysUserGroup>().eq(SysUserGroup::getSourceId, projectId);
         sysUserGroupMapper.delete(wrapper);

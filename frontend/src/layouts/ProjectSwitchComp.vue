@@ -1,30 +1,36 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { NDropdown, SelectOption, DropdownOption } from 'naive-ui'
+import { ref, onMounted, computed, getCurrentInstance } from 'vue'
+import { SelectOption, DropdownOption, NPopselect } from 'naive-ui'
 import { useAppStore } from '/@/store/modules/app'
 import { useUserInfoStore } from '../store/modules/user'
 import { getUserProjectList, IProject, switchProject } from '../apis/modules/project'
 
+const instance = getCurrentInstance()
 const currentProject = ref('/(ㄒoㄒ)/~~暂未选择项目')
 const appStore = useAppStore()
 const userStore = useUserInfoStore()
 const options: SelectOption[] = []
 const projectList = ref<IProject[]>([])
-const currentProjectId = computed(() => {
+const projectId = computed(() => {
   return appStore.getProjectId()
 })
-const handleSelect = (key: string | number, option: DropdownOption) => {
+const currentProjectId = ref(projectId.value)
+const handleSelect = (key: string, option: DropdownOption) => {
   const _projectId = key
-  if (!_projectId || currentProjectId.value === _projectId) {
+  if (!_projectId || projectId.value === _projectId) {
     return false
   }
+  change(_projectId)
+}
+const change = (projectId: string) => {
   const condition = {
     id: userStore.getSessionUser().id,
-    lastProjectId: _projectId as string,
+    lastProjectId: projectId as string,
   }
   switchProject(condition).then((res) => {
     appStore.setProjectId(res.data.lastProjectId as string)
-    changeProjectName(_projectId)
+    // instance?.proxy?.$Bus.emit('projectChange')
+    changeProjectName(projectId)
   })
 }
 const changeProjectName = (projectId: string) => {
@@ -33,39 +39,58 @@ const changeProjectName = (projectId: string) => {
     if (project.length > 0) {
       currentProject.value = project[0].name
     }
+  } else {
+    currentProject.value = 'no project data'
   }
 }
 // * 初始化数据
 const initData = () => {
+  projectList.value = []
   const condition = {
     userId: userStore.getSessionUser().id,
     workspaceId: appStore.getWorkspaceId(),
   }
   getUserProjectList(condition).then((res) => {
-    console.log(res)
     projectList.value = res.data
     const _projectId = appStore.getProjectId()
-    // if (_projectId) {
-
-    // }
+    if (_projectId) {
+      if (projectList.value.length > 0 && projectList.value.map((p) => p.id).indexOf(_projectId) > -1) {
+        change(projectList.value[0].id as string)
+      }
+    } else {
+      if (projectList.value.length > 0) {
+        change(projectList.value[0].id as string)
+      }
+    }
     projectList.value.forEach((ele) => {
       const option: SelectOption = {}
       option.label = ele.name
-      option.key = ele.id
+      option.value = ele.id
       options.push(option)
     })
     changeProjectName(_projectId)
   })
 }
+
+instance?.proxy?.$Bus.on('projectChange', () => {
+  initData()
+})
 onMounted(() => {
   initData()
 })
 </script>
 <template>
-  <n-dropdown trigger="hover" :options="options" @select="handleSelect">
-    <!-- <n-button>找个地方休息</n-button> -->
-    <span class="dropdown-link">{{ currentProject }}</span>
-  </n-dropdown>
+  <n-popselect v-model:value="currentProjectId" :options="options" trigger="click" @update:value="handleSelect">
+    <span class="dropdown-link">{{ $t('commons.project') }}:{{ currentProject }}</span>
+  </n-popselect>
 </template>
 
-<style scoped></style>
+<style scoped>
+.project-name {
+  display: inline-block;
+  width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

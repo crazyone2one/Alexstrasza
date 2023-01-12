@@ -8,11 +8,13 @@ import { IPageResponse } from '/@/apis/interface'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '/@/store/modules/app'
 import { IUserInfo, getWorkspaceMemberPages, getWorkspaceMemberGroup } from '/@/apis/modules/user'
+import RolesTagComponent from '/@/components/RolesTagComponent.vue'
+import AddMemberComp from './AddMemberComp.vue'
 
 const show = ref(false)
 const { t } = useI18n()
 const appStore = useAppStore()
-
+const addMemberComp = ref<InstanceType<typeof AddMemberComp> | null>(null)
 const state = reactive({
   condition: { name: '', limit: 10, page: 1, workspaceId: '' },
 })
@@ -20,14 +22,14 @@ const tableData = reactive<IPageResponse<IUserInfo>>({
   records: [],
   total: 0,
 })
-
+// const authorities = ref<{ [key: string]: ISystemGroup[] }>({ userId: [] })
 const rowKey = (row: IUserInfo) => {
   return row.id as string
 }
 
 // * 添加或者编辑
 const handleEdit = (param?: IUserInfo): void => {
-  console.log('handleEdit')
+  addMemberComp.value?.handleOpenModal(param)
 }
 
 // * 创建列表表头
@@ -47,10 +49,15 @@ const createColumns = (): DataTableColumns<IUserInfo> => {
     {
       title: t('commons.phone'),
       key: 'phone',
+      align: 'center',
     },
     {
       title: t('commons.group'),
       key: 'groups',
+      align: 'center',
+      render(row) {
+        return h(RolesTagComponent, { roles: row.authorities ? row.authorities : [] }, {})
+      },
     },
 
     {
@@ -93,10 +100,13 @@ const loadTableData = () => {
       const { records, total } = resp.data
       records.forEach((u) => {
         getWorkspaceMemberGroup(appStore.getWorkspaceId(), u.id as string).then((resp) => {
-          u.groups = resp.data
+          // authorities.value.userId = resp.data
+          u.authorities = resp.data
         })
       })
       tableData.records = records
+      console.log(tableData.records)
+
       tableData.total = total
       show.value = false
     })
@@ -137,6 +147,12 @@ onMounted(() => {
         @handle-page-size="handlePageSize"
       />
     </n-card>
+    <add-member-comp
+      ref="addMemberComp"
+      :group-type="'WORKSPACE'"
+      :group-scope-id="appStore.getWorkspaceId()"
+      @refresh="loadTableData"
+    />
   </n-spin>
 </template>
 

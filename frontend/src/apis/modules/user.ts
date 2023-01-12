@@ -24,7 +24,7 @@ export interface IUserInfo {
   groups: any[]
   lastWorkspaceId?: string
   lastProjectId?: string
-  authorities?: ISystemGroup[]
+  authorities: ISystemGroup[]
 }
 export interface IGroup {
   ids?: string[]
@@ -93,4 +93,12 @@ export const specialModifyPassword = (param: { id: string; newPassword: string; 
 
 export const getProjectMemberOption = (projectId: string): Promise<IResultData<IUserInfo[]>> => {
   return service.get(`/user/project/member/option/${projectId}`)
+}
+
+export const getUserListByResourceUrl = (url: string): Promise<IResultData<IUserInfo[]>> => {
+  return service.get(url)
+}
+
+export const addWorkspaceMember = (member: any) => {
+  return service.post('user/ws/member/add', member)
 }

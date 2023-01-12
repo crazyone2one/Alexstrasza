@@ -10,6 +10,7 @@ interface Props {
   disable?: boolean
   iconSize?: string | number
   isText?: boolean
+  btnSize?: 'tiny' | 'small' | 'medium' | 'large'
 }
 withDefaults(defineProps<Props>(), {
   usePopover: false,
@@ -18,13 +19,14 @@ withDefaults(defineProps<Props>(), {
   disable: false,
   iconSize: 25,
   isText: false,
+  btnSize: 'medium',
 })
 const emit = defineEmits(['handleClick'])
 </script>
 <template>
   <n-popover v-if="usePopover" trigger="hover">
     <template #trigger>
-      <n-button :type="type" :text="isText" :disabled="disable" @click="emit('handleClick')">
+      <n-button :type="type" :text="isText" :disabled="disable" :size="btnSize" @click="emit('handleClick')">
         <template #icon>
           <icon-comp :type="icon" :size="iconSize" :depth="2" />
         </template>
@@ -32,7 +34,7 @@ const emit = defineEmits(['handleClick'])
     </template>
     {{ text }}
   </n-popover>
-  <n-button v-else :type="type" :disabled="disable" :text="isText" @click="emit('handleClick')">
+  <n-button v-else :type="type" :disabled="disable" :text="isText" :size="btnSize" @click="emit('handleClick')">
     <template #icon>
       <icon-comp :type="icon" :size="iconSize" :depth="2" />
     </template>

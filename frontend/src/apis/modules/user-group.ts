@@ -35,3 +35,7 @@ export const getUserGroupListByPage = (params: ISearch) => {
 export const getUserAllGroups = (userId: string) => {
   return service.get(`/user/group/all/${userId}`)
 }
+
+export const getUserGroupList = (params: any): Promise<IResultData<ISystemGroup[]>> => {
+  return service.post('/user/group/list', params)
+}

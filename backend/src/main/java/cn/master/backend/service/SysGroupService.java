@@ -2,6 +2,7 @@ package cn.master.backend.service;
 
 import cn.master.backend.entity.SysGroup;
 import cn.master.backend.request.EditGroupRequest;
+import cn.master.backend.request.GroupRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author 11's papa
@@ -24,9 +25,17 @@ public interface SysGroupService extends IService<SysGroup> {
 
     List<SysGroup> getGroupByType(EditGroupRequest request);
 
-    List<Map<String,Object>> getAllUserGroup(String userId);
+    List<Map<String, Object>> getAllUserGroup(String userId);
 
     List<SysGroup> getWorkspaceMemberGroups(String workspaceId, String userId);
 
     IPage<SysGroup> getGroupList(EditGroupRequest request, Page<SysGroup> producePage, HttpServletRequest httpServletRequest);
+
+    /**
+     * desc: search by type
+     *
+     * @param request search request parameters
+     * @return java.util.List<cn.master.backend.entity.SysGroup>
+     */
+    List<SysGroup> getGroupsByType(GroupRequest request);
 }

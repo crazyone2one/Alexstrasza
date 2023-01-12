@@ -3,6 +3,7 @@ package cn.master.backend.controller;
 import cn.master.backend.config.ResponseInfo;
 import cn.master.backend.entity.SysGroup;
 import cn.master.backend.request.EditGroupRequest;
+import cn.master.backend.request.GroupRequest;
 import cn.master.backend.service.SysGroupService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -54,5 +55,10 @@ public class SysGroupController {
     @GetMapping("/list/ws/{workspaceId}/{userId}")
     public ResponseInfo<List<SysGroup>> getWorkspaceMemberGroups(@PathVariable String workspaceId, @PathVariable String userId) {
         return ResponseInfo.success(service.getWorkspaceMemberGroups(workspaceId, userId));
+    }
+
+    @PostMapping("/list")
+    public ResponseInfo<List<SysGroup>> getGroupsByType(@RequestBody GroupRequest request) {
+        return ResponseInfo.success(service.getGroupsByType(request));
     }
 }

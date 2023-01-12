@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { DataTableColumns, NCard, NDataTable, NSpin, NSpace, NButton, NPopconfirm } from 'naive-ui'
 import { ref, h, reactive, onMounted, computed } from 'vue'
-import SearchComponent from '/@/components/SearchComponent.vue'
-import PaginationComponent from '/@/components/PaginationComponent.vue'
-import ButtonComp from '/@/components/ButtonComponent.vue'
 import { IPageResponse } from '/@/apis/interface'
 import { useI18n } from 'vue-i18n'
-import DeleteComponent from '/@/components/DeleteComponent.vue'
 import { getProjectPages, IProject, delProjectById } from '/@/apis/modules/project'
 import { useAppStore } from '/@/store/modules/app'
 import { useUserInfoStore } from '/@/store/modules/user'
-import EditProjectComp from './EditProjectComp.vue'
 import { updateCurrentUser } from '/@/apis/modules/user'
+import EditProjectComp from './EditProjectComp.vue'
+import DeleteComponent from '/@/components/DeleteComponent.vue'
+import SearchComponent from '/@/components/SearchComponent.vue'
+import PaginationComponent from '/@/components/PaginationComponent.vue'
+import ButtonComp from '/@/components/ButtonComponent.vue'
+import EditNodeComp from './EditNodeComp.vue'
 
 const show = ref(false)
 const { t } = useI18n()
@@ -19,6 +20,7 @@ const appStore = useAppStore()
 const userStore = useUserInfoStore()
 const editProjectComp = ref<InstanceType<typeof EditProjectComp> | null>(null)
 const deleteComponent = ref<InstanceType<typeof DeleteComponent> | null>(null)
+const editNodeComp = ref<InstanceType<typeof EditNodeComp> | null>(null)
 const state = reactive({
   condition: { name: '', limit: 10, page: 1, workspaceId: '' },
 })
@@ -40,7 +42,9 @@ const handleEdit = (param?: IProject): void => {
 const handleDelete = (param: IProject) => {
   deleteComponent.value?.openDeleteModal(param)
 }
-
+const handleEditNode = (param: string) => {
+  editNodeComp.value?.handleOpen(param)
+}
 // * 创建列表表头
 const createColumns = (): DataTableColumns<IProject> => {
   return [
@@ -113,6 +117,7 @@ const createColumns = (): DataTableColumns<IProject> => {
                 },
                 { default: () => t('commons.edit') }
               ),
+
               h(
                 NPopconfirm,
                 {
@@ -132,6 +137,16 @@ const createColumns = (): DataTableColumns<IProject> => {
                     return t('project.delete_tip')
                   },
                 }
+              ),
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'info',
+                  text: true,
+                  onClick: () => handleEditNode(row.id as string),
+                },
+                { default: () => '节点管理' }
               ),
             ],
           }
@@ -203,6 +218,7 @@ onMounted(() => {
   </n-spin>
   <edit-project-comp ref="editProjectComp" @refresh="loadTableData" />
   <delete-component ref="deleteComponent" :title="$t('project.delete')" @delete="deleteProject" />
+  <edit-node-comp ref="editNodeComp" />
 </template>
 
 <style scoped></style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watchEffect, ref } from 'vue'
 import { NTag } from 'naive-ui'
 import { ISystemGroup } from '../apis/modules/user-group'
 interface Props {
@@ -6,14 +7,19 @@ interface Props {
   bordered?: boolean
   roles: ISystemGroup[]
 }
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   type: 'success',
   bordered: false,
 })
+const tags = ref<ISystemGroup[]>([])
+watchEffect(() => {
+  tags.value = props.roles
+  console.log(tags.value)
+})
 </script>
 <template>
-  <div>
-    <span v-for="(role, index) in roles" :key="index">
+  <div v-if="tags">
+    <span v-for="(role, index) in tags" :key="index">
       <n-tag :type="type" :bordered="bordered">{{ role.name }}</n-tag>
     </span>
   </div>

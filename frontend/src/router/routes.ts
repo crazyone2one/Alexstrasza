@@ -63,6 +63,26 @@ const mainRoutes: RouteRecordRaw[] = [
       requiresAuth: true,
     },
   },
+  {
+    name: 'track/home',
+    path: 'track/home',
+    // redirect: '/track/home',
+    component: () => import('/@/views/track/home/index.vue'),
+    meta: {
+      title: 'Track Home',
+      requiresAuth: true,
+    },
+  },
+  {
+    name: 'track/case/all',
+    path: 'track/case/all',
+    // redirect: '/track/home',
+    component: () => import('/@/views/track/case/index.vue'),
+    meta: {
+      title: 'Track Case',
+      requiresAuth: true,
+    },
+  },
 ]
 const routes: RouteRecordRaw[] = [
   {

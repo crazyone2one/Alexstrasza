@@ -3,6 +3,7 @@ package cn.master.backend.service;
 import cn.master.backend.entity.SysUser;
 import cn.master.backend.entity.UserDTO;
 import cn.master.backend.entity.UserGroupPermissionDTO;
+import cn.master.backend.request.AddMemberRequest;
 import cn.master.backend.request.EditPassWordRequest;
 import cn.master.backend.request.QueryMemberRequest;
 import cn.master.backend.request.UserRequest;
@@ -114,4 +115,19 @@ public interface SysUserService extends IService<SysUser> {
     Integer updateUserPassword(EditPassWordRequest request);
 
     List<SysUser> getProjectMemberOption(String projectId);
+
+    /**
+     * desc: 用户列表
+     *
+     * @return java.util.List<cn.master.backend.entity.SysUser>
+     */
+    List<SysUser> getUserList();
+
+    /**
+     * desc: 添加工作空间成员
+     *
+     * @param request parameter
+     * @return java.lang.String
+     */
+    String addWorkspaceMember(AddMemberRequest request);
 }

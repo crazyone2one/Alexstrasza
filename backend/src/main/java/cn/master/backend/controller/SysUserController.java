@@ -137,4 +137,17 @@ public class SysUserController {
     public ResponseInfo<List<SysUser>> getProjectMemberOption(@PathVariable String projectId) {
         return ResponseInfo.success(sysUserService.getProjectMemberOption(projectId));
     }
+
+    @GetMapping("/list")
+    public ResponseInfo<List<SysUser>> getUserList() {
+        return ResponseInfo.success(sysUserService.getUserList());
+    }
+
+    /**
+     * 添加工作空间成员
+     */
+    @PostMapping("/ws/member/add")
+    public ResponseInfo<String> addMember(@RequestBody AddMemberRequest request) {
+        return ResponseInfo.success(sysUserService.addWorkspaceMember(request));
+    }
 }

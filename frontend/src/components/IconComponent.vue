@@ -22,6 +22,7 @@ import {
   Checkmark as check,
   NewspaperOutline as track,
 } from '@vicons/ionicons5'
+import { EditRegular as edit, TrashAltRegular as trash } from '@vicons/fa'
 const icons = {
   refresh,
   dashboard,
@@ -43,6 +44,8 @@ const icons = {
   lock,
   check,
   track,
+  edit,
+  trash,
 }
 type IconTypes = keyof typeof icons
 const props = defineProps({
