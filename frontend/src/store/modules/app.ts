@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export interface IAppState {
-  sidebarCollapsed: boolean
+  siteName: string
   currentWorkspaceId: string
   currentProjectId: string
   workspaceName: string
@@ -13,15 +13,13 @@ export const useAppStore = defineStore(
   'appStore',
   () => {
     const app = ref<IAppState>({
-      sidebarCollapsed: false,
+      siteName: 'one-piece',
       currentWorkspaceId: '',
       currentProjectId: '',
       workspaceName: '',
       projectName: '',
     })
-    const setCollapsed = (): void => {
-      app.value.sidebarCollapsed = !app.value.sidebarCollapsed
-    }
+
     const setProjectId = (projectId: string): void => {
       app.value.currentProjectId = projectId
     }
@@ -56,7 +54,6 @@ export const useAppStore = defineStore(
     }
     return {
       app,
-      setCollapsed,
       setProjectId,
       setWorkspaceId,
       getProjectId,

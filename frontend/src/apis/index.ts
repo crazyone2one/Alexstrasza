@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useUserInfoStore } from '../store/modules/user'
 import { useAppStore } from '../store/modules/app'
+import { ElMessage, ElMessageBox } from 'element-plus/es/components'
 
 const config = {
   baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -50,26 +51,22 @@ axiosInstance.interceptors.response.use(
     }
   },
   async (error) => {
+    const { code, msg } = error.response.data
     if (error.response?.status === 500) {
-      window.$message?.error('系统错误，联系管理员')
+      ElMessage.error('系统错误，联系管理员')
     }
     if ([400, 401].includes(error.response?.status as number)) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      window.$message?.error(`${error.response?.data.message}`)
+      ElMessage.error(`${error.response?.data.message}`)
     }
     if (error.response.status === 403) {
       const userStore = useUserInfoStore()
-      window.$dialog?.warning({
-        title: '',
-        showIcon: false,
-        content: '登录超时',
-        positiveText: '重新登录',
-        negativeText: '不确定',
-        maskClosable: false,
-        onPositiveClick: async () => {
-          userStore.resetAuthStore()
-          window.location.href = '/'
-        },
+      ElMessageBox.confirm('当前页面已失效，请重新登录', '', {
+        confirmButtonText: 'OK',
+        type: 'warning',
+      }).then(() => {
+        userStore.resetAuthStore()
+        window.location.href = '/'
       })
     }
     return await Promise.reject(error)
